@@ -1,31 +1,4 @@
-import { customType, doublePrecision, integer, pgTable, serial, timestamp } from 'drizzle-orm/pg-core';
-
-export type Point = {
-  longitude: number;
-  latitude: number;
-};
-
-export const pointDB = customType<
-  {
-      data: Point;
-      driverData: string;
-  }
->({
-  dataType() {
-      return 'GEOMETRY(POINT, 4326)';
-  },
-  toDriver(value: Point): string {
-      return `SRID=4326;POINT(${value.longitude} ${value.latitude})`;
-  },
-  fromDriver(value: string): Point {
-      const matches = value.match(/POINT\((?<longitude>[\d.-]+) (?<latitude>[\d.-]+)\)/);
-      const { longitude, latitude } = matches.groups;
-      return {
-          longitude: parseFloat(longitude),
-          latitude: parseFloat(latitude),
-      };
-  },
-});
+import { doublePrecision, integer, pgTable, serial, timestamp } from 'drizzle-orm/pg-core';
 
 export const coordinatesTable = pgTable('coordinates', {
   id: serial('id').primaryKey(),
