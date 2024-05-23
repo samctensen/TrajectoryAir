@@ -1,6 +1,6 @@
 
 		begin
-      f = addfile("/Users/sam/Desktop/2024-05-19_05.nc","r")
+      f = addfile("/Users/sam/WorkSpaces/trajectoryair/2024-05-19_05.nc","r")
       print(f)
 		end
     
