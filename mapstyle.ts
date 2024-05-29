@@ -4,11 +4,25 @@ const MAX_ZOOM_LEVEL = 9;
 
 export const heatmapLayer: HeatmapLayer = {
   id: 'heatmap',
-  maxzoom: MAX_ZOOM_LEVEL,
   type: 'heatmap',
   paint: {
-    // Increase the heatmap weight based on frequency and property magnitude
-    'heatmap-weight': ['interpolate', ['linear'], ['get', 'mag'], 0, 0, 6, 1],
+    // Increase the heatmap weight based on PM25
+    'heatmap-weight': [
+      'interpolate',
+      ['linear'],
+      ['get', 'PM25'],
+        0, 0,
+        25, 0.125,
+        40, 0.2,
+        60, 0.3,
+        80, 0.4,
+        100, 0.5,
+        120, 0.6,
+        140, 0.7,
+        160, 0.8,
+        180, 0.9,
+        200, 1
+      ],
     // Increase the heatmap color weight weight by zoom level
     // heatmap-intensity is a multiplier on top of heatmap-weight
     'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 0, 1, MAX_ZOOM_LEVEL, 3],
@@ -19,18 +33,17 @@ export const heatmapLayer: HeatmapLayer = {
       'interpolate',
       ['linear'],
       ['heatmap-density'],
-      0,
-      'rgba(33,102,172,0)',
-      0.2,
-      'rgb(103,169,207)',
-      0.4,
-      'rgb(209,229,240)',
-      0.6,
-      'rgb(253,219,199)',
-      0.8,
-      'rgb(239,138,98)',
-      0.9,
-      'rgb(255,201,101)'
+        0, 'rgba(0, 0, 0, 0)', 
+        0.125, 'rgb(254, 243, 231)',    
+        0.2, 'rgb(251, 234, 212)',
+        0.3, 'rgb(248, 217, 179)',
+        0.4, 'rgb(246, 194, 137)',
+        0.5, 'rgb(243, 166, 96)',
+        0.6, 'rgb(239, 141, 62)',
+        0.7, 'rgb(227, 112, 36)',
+        0.8, 'rgb(207, 86, 25)',
+        0.9, 'rgb(169, 69, 18)',
+        1.0, 'rgb(135, 53, 14)'     
     ],
     // Adjust the heatmap radius by zoom level
     'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 0, 2, MAX_ZOOM_LEVEL, 20],

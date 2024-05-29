@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
 const useGeoJSON = (url: string) => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [geoJSONData, setData] = useState(null);
+  const [geoJSONLoading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,7 +23,7 @@ const useGeoJSON = (url: string) => {
     fetchData();
   }, [url]);
 
-  return { data, loading };
+  return { geoJSONData, geoJSONLoading };
 };
 
 export default useGeoJSON;

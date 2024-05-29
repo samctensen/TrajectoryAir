@@ -15,15 +15,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-      <nav className="bg-mapgrey p-4 border-b-2 border-black">
-          <ul className="flex justify-between items-center list-none m-0 p-0">
-            <li className="nav-item">
-              <a href="/" className="text-white no-underline">Trajectory Air</a>
-            </li>
-          </ul>
-        </nav>
+    <html lang="en" className="h-full">
+      <body className={`h-full ${inter.className}`}>
         {children}
       </body>
     </html>
