@@ -8,6 +8,9 @@ import { faWind } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import MapGL, { Layer, Source } from 'react-map-gl';
+import Slider from 'react-slick';
+import "slick-carousel/slick/slick-theme.css";
+import "slick-carousel/slick/slick.css";
 import { heatmapLayer } from '../mapstyle';
 config.autoAddCss = false;
 
@@ -15,6 +18,17 @@ export default function Home() {
   const [mapLoaded, setMapLoaded] = useState(false);
   const { geoJSONData, geoJSONLoading } = useGeoJSON('/2024-05-19_05.geojson');
   const { userLocationLoading, userLocation, userLocationError } = useUserLocation();
+
+  const getNextDays = (days: number) => {
+    const dates = [];
+    for (let i = 0; i < days; i++) {
+      const date = new Date();
+      date.setDate(date.getDate() + i);
+      dates.push(date);
+    }
+    return dates;
+  };
+  const nextDays = getNextDays(5);
 
   useEffect(() => {
     if (!userLocationLoading && !geoJSONLoading) {
@@ -61,6 +75,23 @@ export default function Home() {
           </Source>
         </MapGL>
       )}
+      <div className="slider-container">
+        <Slider 
+          className="center"
+          slidesToShow={1}
+          slidesToScroll={1}
+          speed={300}
+          dots={true}
+        >
+          {nextDays.map((date, index) => (
+            <div className="slide-content" key={index}>
+              <h3 className="slide-text">
+                {index === 0 ? 'Today' : date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric'})}
+              </h3>
+            </div>
+          ))}
+        </Slider>
+      </div>
     </main>
   );
 }

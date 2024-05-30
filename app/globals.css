@@ -27,6 +27,37 @@ html, #__next {
   padding: 0;
 }
 
-nav {
-  overflow: hidden;
+
+.slider-container .slick-slider {
+  pointer-events: auto;
+}
+
+.slider-container {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 250px;
+  pointer-events: none;
+  background-color: black;
+  border-radius: 30px;
+  margin-bottom: 25px;
+}
+
+.slide-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 6px;
+}
+
+.slide-text {
+  text-align: center;
+  color: white;
+  flex: 1;
+}
+
+.slick-dots li.slick-active button:before {
+  color:white !important;
 }
