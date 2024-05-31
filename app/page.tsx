@@ -12,7 +12,7 @@ import MapGL, { Layer, Source } from 'react-map-gl';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
-import { heatmapLayer } from '../mapstyle';
+import { HeatMap } from '../components/HeatMap';
 config.autoAddCss = false;
 
 export default function Home() {
@@ -84,7 +84,7 @@ export default function Home() {
           onLoad={() => setMapLoaded(true)}
         >
           <Source type="geojson" data={geoJSONData!}>
-            <Layer {...heatmapLayer} />
+            <Layer {...HeatMap} />
           </Source>
         </MapGL>
       )}
