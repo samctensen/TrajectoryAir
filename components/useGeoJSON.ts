@@ -23,7 +23,22 @@ const useGeoJSON = (url: string) => {
     fetchData();
   }, [url]);
 
-  return { geoJSONData, geoJSONLoading };
+  const setGeoJSONData = async (url: string) => {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const json = await response.json();
+      setData(json);
+    } catch (error) {
+      console.error('Error fetching the GeoJSON data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { geoJSONData, geoJSONLoading, setGeoJSONData };
 };
 
 export default useGeoJSON;

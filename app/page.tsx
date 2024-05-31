@@ -6,6 +6,7 @@ import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { faWind } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import 'mapbox-gl/dist/mapbox-gl.css';
 import { useEffect, useState } from 'react';
 import MapGL, { Layer, Source } from 'react-map-gl';
 import Slider from 'react-slick';
@@ -16,8 +17,20 @@ config.autoAddCss = false;
 
 export default function Home() {
   const [mapLoaded, setMapLoaded] = useState(false);
-  const { geoJSONData, geoJSONLoading } = useGeoJSON('/2024-05-19_05.geojson');
-  const { userLocationLoading, userLocation, userLocationError } = useUserLocation();
+  const { geoJSONData, geoJSONLoading, setGeoJSONData } = useGeoJSON('/2024-05-15.geojson');
+  const { userLocationLoading, userLocation } = useUserLocation();
+  const currentDate = new Date("2024-05-15");
+  var sliderDate = new Date("2024-05-15");
+
+  function OnDateChange(current: number, next: number) {
+    if (next > current) {
+      sliderDate.setDate(sliderDate.getDate() + 1);
+    }
+    else {
+      sliderDate.setDate(currentDate.getDate());
+    }
+    setGeoJSONData("/" + sliderDate.toISOString().split('T')[0] + ".geojson");
+  }
 
   const getNextDays = (days: number) => {
     const dates = [];
@@ -77,6 +90,9 @@ export default function Home() {
       )}
       <div className="slider-container">
         <Slider 
+          beforeChange={(current, next) => {
+            OnDateChange(current, next);
+          }}
           className="center"
           slidesToShow={1}
           slidesToScroll={1}
