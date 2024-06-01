@@ -1,4 +1,5 @@
 "use client";
+import { MapLegend } from '@/components/MapLegend';
 import useGeoJSON from '@/components/useGeoJSON';
 import useUserLocation from '@/components/useUserLocation';
 import { MAP_BOUNDARY, U_OF_U_DEFAULT_COORDS } from '@/constants/constants';
@@ -88,6 +89,8 @@ export default function Home() {
           </Source>
         </MapGL>
       )}
+      <MapLegend />
+      <div className="legend-title">PM-25 Level</div>
       <div className="slider-container">
         <Slider 
           beforeChange={(current, next) => {
