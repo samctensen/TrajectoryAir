@@ -24,11 +24,17 @@ export default function Home() {
   var sliderDate = new Date("2024-05-15");
 
   function OnDateChange(current: number, next: number) {
+    console.log(current, next);
     if (next > current) {
       sliderDate.setDate(sliderDate.getDate() + 1);
     }
     else {
-      sliderDate.setDate(currentDate.getDate());
+      if (next == 0) {
+        sliderDate.setDate(currentDate.getDate());
+      }
+      else {
+        sliderDate.setDate(sliderDate.getDate() - 1);
+      }
     }
     setGeoJSONData("/" + sliderDate.toISOString().split('T')[0] + ".geojson");
   }
