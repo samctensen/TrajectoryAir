@@ -13,7 +13,7 @@ import MapGL, { Layer, Source } from 'react-map-gl';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
-import { HeatMap } from '../components/HeatMap';
+import { ParticleMatterLayer } from '../components/ParticleMatterLayer';
 config.autoAddCss = false;
 
 export default function Home() {
@@ -81,16 +81,17 @@ export default function Home() {
           }}
           mapStyle="mapbox://styles/mapbox/dark-v11"
           maxBounds={MAP_BOUNDARY}
+          maxZoom={10}
           style={{ width: '100%', height: '100%' }}
           onLoad={() => setMapLoaded(true)}
         >
           <Source type="geojson" data={geoJSONData!}>
-            <Layer {...HeatMap} />
+            <Layer {...ParticleMatterLayer} />
           </Source>
         </MapGL>
       )}
       <MapLegend />
-      <div className="legend-title">PM-25 Level</div>
+      <div className="legend-title">PM 2.5 Level</div>
       <div className="slider-container">
         <Slider 
           beforeChange={(current, next) => {
