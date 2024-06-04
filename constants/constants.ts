@@ -6,6 +6,6 @@ export const U_OF_U_DEFAULT_COORDS = {
 }
 
 export const MAP_BOUNDARY: LngLatBoundsLike = [
-    [-130, 30], // Southwest coordinates
-    [-80, 70] // Northeast coordinates
+    [-140, 24], // Southwest coordinates
+    [-60, 70] // Northeast coordinates
 ];

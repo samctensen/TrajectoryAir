@@ -1023,24 +1023,14 @@ export const ParticleMatterLayer: CircleLayer = {
           2, 1,
           3, 1,
           4, 1,
-          5, 3,
-          6, 10,
+          5, 2,
+          6, 6,
           7, 10,
           8, 20,
-          9, 30,
+          9, 35,
           10, 70
         ],
-        "circle-opacity": [
-          "interpolate",
-          [
-            "linear"
-          ],
-          [
-            "zoom"
-          ],
-          0, 1,
-          10, 0.1
-        ],
+        "circle-opacity": 0.1,
         "circle-blur": 0.8
       },
 };
