@@ -1,4 +1,5 @@
 "use client";
+import { LocationInfo } from '@/components/LocationInfo';
 import { MapLegend } from '@/components/MapLegend';
 import useGeoJSON from '@/components/useGeoJSON';
 import useUserLocation from '@/components/useUserLocation';
@@ -9,7 +10,7 @@ import { faWind } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useEffect, useState } from 'react';
-import MapGL, { Layer, Source } from 'react-map-gl';
+import MapGL, { Layer, MapLayerMouseEvent, Source } from 'react-map-gl';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
@@ -20,18 +21,19 @@ export default function Home() {
   const [mapLoaded, setMapLoaded] = useState(false);
   const { geoJSONData, geoJSONLoading, setGeoJSONData } = useGeoJSON('/2024-05-15.geojson');
   const { userLocationLoading, userLocation } = useUserLocation();
+  const [showInfo, setShowInfo] = useState(false);
+  const [clickedLatLng, setClickedLatLng] = useState<[number, number] | null>(null);
+  const [clickedPM25, setClickedPM25] = useState<number>(0);
   const currentDate = new Date("2024-05-15");
   var sliderDate = new Date("2024-05-15");
 
   function OnDateChange(current: number, next: number) {
     if (next > current) {
       sliderDate.setDate(sliderDate.getDate() + 1);
-    }
-    else {
-      if (next == 0) {
+    } else {
+      if (next === 0) {
         sliderDate.setDate(currentDate.getDate());
-      }
-      else {
+      } else {
         sliderDate.setDate(sliderDate.getDate() - 1);
       }
     }
@@ -40,7 +42,12 @@ export default function Home() {
 
   const getNextDays = (days: number) => {
     const dates = [];
-    for (let i = 0; i < days; i++) {
+    for (let i = (days / 2) - 1; i > 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      dates.push(date);
+    }
+    for (let i = 0; i < days / 2; i++) {
       const date = new Date();
       date.setDate(date.getDate() + i);
       dates.push(date);
@@ -54,6 +61,23 @@ export default function Home() {
       setMapLoaded(true);
     }
   }, [userLocationLoading, geoJSONLoading]);
+
+  const handleCloseInfo = () => {
+    setShowInfo(false);
+  };
+
+  const onClick = (event: MapLayerMouseEvent) => {
+    setShowInfo(true);
+    setClickedLatLng([event.lngLat.lat, event.lngLat.lng]);
+    const feature = event.features && event.features[0];
+    if (feature && feature.properties) {
+      const pm25 = feature.properties.PM25;
+      setClickedPM25(pm25);
+    }
+    else {
+      setClickedPM25(0);
+    }
+  };
 
   if (userLocationLoading || geoJSONLoading) {
     return (
@@ -75,7 +99,7 @@ export default function Home() {
   }
 
   return (
-    <main className='h-full w-full'>
+    <main className="h-full w-full relative">
       {mapLoaded && (
         <MapGL
           mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
@@ -88,7 +112,9 @@ export default function Home() {
           maxBounds={MAP_BOUNDARY}
           maxZoom={10}
           style={{ width: '100%', height: '100%' }}
+          interactiveLayerIds={["ParticleMatterLayer"]}
           onLoad={() => setMapLoaded(true)}
+          onClick={onClick}
         >
           <Source type="geojson" data={geoJSONData!}>
             <Layer {...ParticleMatterLayer} />
@@ -107,16 +133,20 @@ export default function Home() {
           slidesToScroll={1}
           speed={300}
           dots={true}
+          initialSlide={2}
         >
           {nextDays.map((date, index) => (
             <div className="slide-content" key={index}>
               <h3 className="slide-text">
-                {index === 0 ? 'Today' : date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric'})}
+                {index === 2 ? 'Today' : date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
               </h3>
             </div>
           ))}
         </Slider>
       </div>
+      {showInfo && (
+        <LocationInfo close={handleCloseInfo} latLng={clickedLatLng} pm25={clickedPM25}/>
+      )}
     </main>
   );
 }

@@ -1,7 +1,7 @@
 import type { CircleLayer } from 'react-map-gl';
 
 export const ParticleMatterLayer: CircleLayer = {
-  "id": "2024-05-19-05-5r6pvx",
+  "id": "ParticleMatterLayer",
       "type": "circle",
       "paint": {
         "circle-color": [
