@@ -1,4 +1,4 @@
-import { LngLatBoundsLike } from "react-map-gl";
+import type { LngLatBoundsLike } from 'react-map-gl';
 
 export const U_OF_U_DEFAULT_COORDS = {
     lat: 82.8628,
