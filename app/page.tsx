@@ -29,7 +29,7 @@ export default function Home() {
   const [layerID, setLayerID] = useState("20240517");
   const firstDate = new Date('2024-05-15');
   const sliderDays = getNextDays(5);
-  const layerURLs = ["4h7e6bm6", "5s4xxzhr", "3gofe1r7", "6w3bn0nh", "d1aj7qju"]
+  const layerURLs = ["4h7e6bm6", "5s4xxzhr", "4cmdugpd", "6w3bn0nh", "d1aj7qju"]
 
   useEffect(() => {
     if (!userLocationLoading) {
