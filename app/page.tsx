@@ -1,7 +1,8 @@
 'use client';
+import { DateSlider } from '@/components/DateSlider/DateSlider';
 import { LocationInfo } from '@/components/LocationInfo/LocationInfo';
 import { MapLegend } from '@/components/MapLegend/MapLegend';
-import '@/components/Slider.css';
+import { TimeSlider } from '@/components/TimeSlider/TimeSlider';
 import useUserLocation from '@/components/useUserLocation';
 import { MAP_BOUNDARY, U_OF_U_DEFAULT_COORDS } from '@/constants/constants';
 import { config } from '@fortawesome/fontawesome-svg-core';
@@ -11,7 +12,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useEffect, useState } from 'react';
 import MapGL, { Layer, MapLayerMouseEvent, Source } from 'react-map-gl';
-import Slider from 'react-slick';
 import 'slick-carousel/slick/slick-theme.css';
 import 'slick-carousel/slick/slick.css';
 import { ParticleMatterLayer } from '../components/ParticleMatterLayer';
@@ -130,26 +130,8 @@ export default function Home() {
         </MapGL>
       )}
       <MapLegend />
-      <div className='legend-title'>PM 2.5 Level</div>
-      <div className='slider-container'>
-        <Slider 
-          beforeChange={onDateChange}
-          className='center'
-          slidesToShow={1}
-          slidesToScroll={1}
-          speed={300}
-          dots={true}
-          initialSlide={2}
-        >
-          {daySpan.map((date, index) => (
-            <div className='slide-content' key={index}>
-              <h3 className='slide-text'>
-                {index === 2 ? 'Today' : date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-              </h3>
-            </div>
-          ))}
-        </Slider>
-      </div>
+      <DateSlider onDateChange={onDateChange} daySpan={daySpan} />
+      <TimeSlider />
       {showInfo && (
         <LocationInfo close={onCloseInfoClick} latLng={clickedLatLng} pm25={clickedPM25}/>
       )}

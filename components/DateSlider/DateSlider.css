@@ -10,7 +10,8 @@
     width: 250px;
     pointer-events: none;
     background-color: black;
-    border-radius: 30px;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
     margin-bottom: 25px;
 }
   

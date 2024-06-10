@@ -11,6 +11,7 @@ export const MapLegend = () => {
     ];
 
     return (
+        <div>
         <div className='legend-container'>
             <div className='legend'>
                 {pm25Levels.map((level, index) => (
@@ -24,6 +25,8 @@ export const MapLegend = () => {
                     </div>
                 ))}
             </div>
+        </div>
+        <div className='legend-title'>PM 2.5 Level</div>
         </div>
     );
 };
