@@ -2,11 +2,11 @@ import Slider from "react-slick";
 import './DateSlider.css';
 
 interface DateSliderProps {
+    sliderDays: Date[]
     onDateChange(current: number, next: number): void
-    daySpan: Date[]
 }
 
-export const DateSlider = ({ onDateChange, daySpan }: DateSliderProps) => {
+export const DateSlider = ({ sliderDays, onDateChange }: DateSliderProps) => {
     return (
         <div className='slider-container'>
         <Slider 
@@ -18,7 +18,7 @@ export const DateSlider = ({ onDateChange, daySpan }: DateSliderProps) => {
           dots={true}
           initialSlide={2}
         >
-          {daySpan.map((date, index) => (
+          {sliderDays.map((date, index) => (
             <div className='slide-content' key={index}>
               <h3 className='slide-text'>
                 {index === 2 ? 'Today' : date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}

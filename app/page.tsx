@@ -19,15 +19,16 @@ config.autoAddCss = false;
 
 export default function Home() {
   const [mapLoaded, setMapLoaded] = useState(false);
-  const { userLocationLoading, userLocation } = useUserLocation();
+  const { userLocationLoading, userLocation, userTime, userTimezone } = useUserLocation();
   const [showInfo, setShowInfo] = useState(false);
   const [clickedLatLng, setClickedLatLng] = useState<[number, number] | null>(null);
   const [clickedPM25, setClickedPM25] = useState<number>(0);
   const [sliderDate, setSliderDate] = useState(new Date('2024-05-17'));
+  const [sliderTime, setSliderTime] = useState(userTime.getHours());
   const [layerIndex, setLayerIndex] = useState(2);
   const [layerID, setLayerID] = useState("20240517");
   const firstDate = new Date('2024-05-15');
-  const daySpan = getNextDays(5);
+  const sliderDays = getNextDays(5);
   const layerURLs = ["4h7e6bm6", "5s4xxzhr", "3gofe1r7", "6w3bn0nh", "d1aj7qju"]
 
   useEffect(() => {
@@ -69,12 +70,15 @@ export default function Home() {
     setLayerID(sliderDate.toISOString().split('T')[0].replace(/-/g, ''));
   }
 
+  function onTimeChange(event: Event, value: number) {
+    setSliderTime(value);
+  };
+
   function onMapClick(event: MapLayerMouseEvent) {
     setShowInfo(true);
     setClickedLatLng([event.lngLat.lat, event.lngLat.lng]);
     const feature = event.features && event.features[0];
     if (feature && feature.properties) {
-      console.log(feature)
       const pm25 = feature.properties.PM25;
       setClickedPM25(pm25);
     }
@@ -130,8 +134,8 @@ export default function Home() {
         </MapGL>
       )}
       <MapLegend />
-      <DateSlider onDateChange={onDateChange} daySpan={daySpan} />
-      <TimeSlider />
+      <DateSlider sliderDays={sliderDays} onDateChange={onDateChange}/>
+      <TimeSlider sliderValue={sliderTime} onTimeChange={onTimeChange} />
       {showInfo && (
         <LocationInfo close={onCloseInfoClick} latLng={clickedLatLng} pm25={clickedPM25}/>
       )}
