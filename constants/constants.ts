@@ -10,6 +10,6 @@ export const MAP_BOUNDARY: LngLatBoundsLike = [
     [-60, 70] // Northeast coordinates
 ];
 
-export const TILESET_IDS = ['4y6bvw98', 'c0sunfv3', '9djlunly', '4z3i2th7', 'bzwj3nf3', '315w88jy', '2r20rhtd', '0rr08zjz', '4yvfnfhb', '3calqd1q', '776a9736', 'a29d2cp6', '3w34wtqm', 'auipppxo', 'db0q7kww', '1d7d3oun', '6vv0wvq4', '3fe78bgo', '0yfhscv7', '90azpxfb', '9ryqyos7', '0uut2jzb', 'bm4ctgoh', '9k8oamld',
-    "7dujhnuv", "9f9ysenl", "9q4l6tax", "cvd3f963", "5hw2vgd9", "8lavkt25"
-]
+export const TILESET_IDS = ['8qc1eprt', '34y2u5uc', '29euf63c', '4xypovov', 'd2l79qqt', '5h9d0q4k', 'dikpv503', '0mn4ug6q', '6o79lhuu', 'dzol0hae', 'bcai9r53', '5no547qp', '26jrmzsk', 'drlq1w1s', '2xem3olx', '6cmz1al2', '4gb41vgr', '7wdilb01', 'dk5yamze', '1pyv4lto', '41l6e1ep', '3mmgtky9', '7g0vfb27', '00mygjde',
+    '4ebm4bbk', 'bxt4bumt', '6hrq2axa', '53gnqjd9', '0vcjdtqx', 'b2mwxltz',
+];

@@ -18,13 +18,17 @@ config.autoAddCss = false;
 
 export default function Home() {
   const mapRef = useRef<MapRef | null>(null);
-  const { userLocationLoading, userLocation, userTime, userTimezone } = useUserLocation();
+  const { userLocation, userTime } = useUserLocation();
+  const offsetInMinutes = new Date().getTimezoneOffset();
+  const offsetHours = Math.abs(Math.floor(offsetInMinutes / 60));
+  const offsetSign = offsetInMinutes < 0 ? -1 : 1;
+  const userTimezone = (offsetSign * offsetHours);
   const [showInfo, setShowInfo] = useState(false);
   const [clickedLatLng, setClickedLatLng] = useState<[number, number] | null>(null);
   const [clickedPM25, setClickedPM25] = useState<number>(0);
   const [sliderDate, setSliderDate] = useState(new Date('2024-05-15'));
   const [sliderTime, setSliderTime] = useState(userTime.getMinutes() < 30 ? userTime.getHours() : userTime.getHours() + 1);
-  const [tilesetIDIndex, setTilesetIDIndex] = useState(sliderTime + userTimezone);
+  const [tilesetID, setTilesetID] = useState(TILESET_IDS[(userTime.getMinutes() < 30 ? userTime.getHours() : userTime.getHours() + 1) + userTimezone]);
   const [maxBounds, setMaxBounds] = useState<LngLatBoundsLike | null>(null);
   const [showLogo, setShowLogo] = useState(true);
   const [mapControlsEnabled, setMapControls] = useState(false);
@@ -82,11 +86,12 @@ export default function Home() {
   }
 
   function onTimeChange(event: Event, value: number) {
+    setTilesetID(TILESET_IDS[value + userTimezone]);
     setSliderTime(value);
     if (value + userTimezone > 23) {
       setSliderDate(new Date(sliderDate.getDate() + 1));
     }
-    setTilesetIDIndex(value + userTimezone);
+    setTilesetID(TILESET_IDS[value + userTimezone]);
   }
 
   function onMapClick(event: MapLayerMouseEvent) {
@@ -106,13 +111,6 @@ export default function Home() {
 
   function onCloseInfoClick() {
     setShowInfo(false);
-  }
-
-  function formatDate(): string {
-    const year = sliderDate.getFullYear();
-    const month = (sliderDate.getMonth() + 1).toString().padStart(2, '0');
-    const day = (sliderDate.getDate() + 1).toString().padStart(2, '0');
-    return `${year}${month}${day}_`;
   }
 
   return (
@@ -142,8 +140,8 @@ export default function Home() {
         dragPan={mapControlsEnabled}
         keyboard={mapControlsEnabled}
       >
-        <Source type='vector' url={'mapbox://samctensen.' + TILESET_IDS[tilesetIDIndex]}>
-          <Layer {...ParticleMatterLayer(formatDate() + (tilesetIDIndex < 10 ? "0" : "") + tilesetIDIndex)} />
+        <Source type='vector' url={'mapbox://samctensen.' + tilesetID}>
+          <Layer {...ParticleMatterLayer} />
         </Source>
       </MapGL>
       <MapLegend />
