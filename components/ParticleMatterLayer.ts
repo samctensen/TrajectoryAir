@@ -1013,9 +1013,56 @@ export const ParticleMatterLayer = (sourceLayer: string): CircleLayer => {
         '#7e0023'
       ],
       'circle-stroke-color': '#ffffff',
-      "circle-radius": 1,
-      "circle-blur": 0.8
-      
+      'circle-radius': [
+        'interpolate',
+        [
+          'linear'
+        ],
+        [
+          'zoom'
+        ],
+        2, 4,
+        3, 6,
+        4, 8,
+        6, 15,
+        7, 20,
+        8, 25,
+        9, 50,
+        10, 80,
+      ],
+      'circle-opacity': [
+        'interpolate',
+        [
+          'linear'
+        ],
+        [
+          'zoom'
+        ],
+        2, 0.018,
+        3, 0.018,
+        4, 0.018,
+        6, 0.02,
+        7, 0.02,
+        8, 0.02,
+        9, 0.02,
+        10, 0.02,
+      ],
+      'circle-blur': [
+        'interpolate',
+        [
+          'linear'
+        ],
+        [
+          'zoom'
+        ],
+        2, 0.3,
+        4, 0.4,
+        6, 0.5,
+        7, 0.6,
+        8, 0.7,
+        9, 0.8,
+        10, 0.9,
+      ]
     },
   }
 };

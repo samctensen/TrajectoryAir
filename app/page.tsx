@@ -4,7 +4,7 @@ import { LocationInfo } from '@/components/LocationInfo/LocationInfo';
 import { MapLegend } from '@/components/MapLegend/MapLegend';
 import { TimeSlider } from '@/components/TimeSlider/TimeSlider';
 import useUserLocation from '@/components/useUserLocation';
-import { MAP_BOUNDARY, U_OF_U_DEFAULT_COORDS } from '@/constants/constants';
+import { MAP_BOUNDARY, TILESET_IDS, U_OF_U_DEFAULT_COORDS } from '@/constants/constants';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { faWind } from '@fortawesome/free-solid-svg-icons';
@@ -23,13 +23,11 @@ export default function Home() {
   const [showInfo, setShowInfo] = useState(false);
   const [clickedLatLng, setClickedLatLng] = useState<[number, number] | null>(null);
   const [clickedPM25, setClickedPM25] = useState<number>(0);
-  const [sliderDate, setSliderDate] = useState(new Date('2024-05-17'));
-  const [sliderTime, setSliderTime] = useState(userTime.getHours());
-  const [layerIndex, setLayerIndex] = useState(2);
-  const [layerID, setLayerID] = useState("20240517");
+  const [sliderDate, setSliderDate] = useState(new Date('2024-05-15'));
+  const [sliderTime, setSliderTime] = useState(userTime.getMinutes() < 30 ? userTime.getHours() : userTime.getHours() + 1);
+  const [tilesetIDIndex, setTilesetIDIndex] = useState(sliderTime + userTimezone);
   const firstDate = new Date('2024-05-15');
   const sliderDays = getNextDays(5);
-  const layerURLs = ["4h7e6bm6", "5s4xxzhr", "0r6spmn1", "6w3bn0nh", "d1aj7qju"]
 
   useEffect(() => {
     if (!userLocationLoading) {
@@ -56,22 +54,22 @@ export default function Home() {
     const newSliderDate = new Date(sliderDate);
     if (next > current) {
       newSliderDate.setDate(sliderDate.getDate() + 1);
-      setLayerIndex(layerIndex + 1);
     }
     else if (next == 0) {
       newSliderDate.setDate(firstDate.getDate());
-      setLayerIndex(0);
     }
     else {
       newSliderDate.setDate(sliderDate.getDate() - 1);
-      setLayerIndex(layerIndex - 1);
     }
     setSliderDate(newSliderDate);
-    setLayerID(sliderDate.toISOString().split('T')[0].replace(/-/g, ''));
   }
 
   function onTimeChange(event: Event, value: number) {
     setSliderTime(value);
+    if (value + userTimezone > 23) {
+      setSliderDate(new Date(sliderDate.getDate() + 1));
+    }
+    setTilesetIDIndex(value + userTimezone);
   };
 
   function onMapClick(event: MapLayerMouseEvent) {
@@ -90,6 +88,13 @@ export default function Home() {
   function onCloseInfoClick() {
     setShowInfo(false);
   };
+
+  function formatDate(): string {
+    const year = sliderDate.getFullYear();
+    const month = (sliderDate.getMonth() + 1).toString().padStart(2, '0');
+    const day = (sliderDate.getDate() + 1).toString().padStart(2, '0');
+    return `${year}${month}${day}_`;
+}
 
   if (userLocationLoading) {
     return (
@@ -128,8 +133,8 @@ export default function Home() {
           onLoad={() => setMapLoaded(true)}
           onClick={onMapClick}
         >
-          <Source type='vector' url={'mapbox://samctensen.' + layerURLs[layerIndex]}>
-            <Layer {...ParticleMatterLayer(layerID)} />
+          <Source type='vector' url={'mapbox://samctensen.' + TILESET_IDS[tilesetIDIndex]}>
+            <Layer {...ParticleMatterLayer(formatDate() + (tilesetIDIndex < 10 ? "0" : "" ) + tilesetIDIndex)} />
           </Source>
         </MapGL>
       )}

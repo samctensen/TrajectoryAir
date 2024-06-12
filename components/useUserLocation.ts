@@ -5,7 +5,7 @@ const useUserLocation = () => {
   const [userLocationError, setError] = useState<string | null>(null);
   const [userLocationLoading, setLoading] = useState(true);
   const [userTime] = useState(new Date());
-  const [userTimezone, setTimezone] = useState('');
+  const [userTimezone, setTimezone] = useState(0);
 
   useEffect(() => {
     if (!navigator.geolocation) {
@@ -16,9 +16,8 @@ const useUserLocation = () => {
     const now = new Date();
     const offsetInMinutes = now.getTimezoneOffset();
     const offsetHours = Math.abs(Math.floor(offsetInMinutes / 60));
-    const offsetMinutes = Math.abs(offsetInMinutes % 60);
-    const offsetSign = offsetInMinutes < 0 ? '+' : '-';
-    setTimezone(`UTC${offsetSign}${offsetHours}:${offsetMinutes}`);
+    const offsetSign = offsetInMinutes < 0 ? -1 : 1;
+    setTimezone(offsetSign * offsetHours);
 
     const handleSuccess = (position: GeolocationPosition) => {
       const { latitude, longitude } = position.coords;
