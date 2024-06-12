@@ -1028,7 +1028,7 @@ export const ParticleMatterLayer = (sourceLayer: string): CircleLayer => {
         7, 20,
         8, 25,
         9, 50,
-        10, 80,
+        10, 130,
       ],
       'circle-opacity': [
         'interpolate',
