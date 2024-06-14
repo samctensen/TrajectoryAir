@@ -3,6 +3,7 @@ import { DateSlider } from '@/components/DateSlider/DateSlider';
 import { LocationInfo } from '@/components/LocationInfo/LocationInfo';
 import { Logo } from '@/components/Logo/Logo';
 import { MapLegend } from '@/components/MapLegend/MapLegend';
+import { MediaControls } from '@/components/MediaControls/MediaControls';
 import { TimeSlider } from '@/components/TimeSlider/TimeSlider';
 import useUserLocation from '@/components/useUserLocation';
 import { MAP_BOUNDARY, TILESET_IDS, U_OF_U_DEFAULT_COORDS } from '@/constants/constants';
@@ -31,6 +32,7 @@ export default function Home() {
   const [tilesetID, setTilesetID] = useState(TILESET_IDS[(userTime.getMinutes() < 30 ? userTime.getHours() : userTime.getHours() + 1) + userTimezone]);
   const [maxBounds, setMaxBounds] = useState<LngLatBoundsLike | null>(null);
   const [showLogo, setShowLogo] = useState(true);
+  const [dayPlaying, setDayPlaying] = useState(false);
   const [mapControlsEnabled, setMapControls] = useState(false);
   const firstDate = new Date('2024-05-15');
   const sliderDays = getNextDays(5);
@@ -41,6 +43,29 @@ export default function Home() {
     }, 2500);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (dayPlaying) {
+      interval = setInterval(() => {
+        setSliderTime((prevTime) => {
+          const newTime = (prevTime + 1) % 24;
+          return newTime;
+        });
+      }, 2000);
+    } else if (interval) {
+      clearInterval(interval);
+    }
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [dayPlaying]);
+
+  useEffect(() => {
+    setTilesetID(TILESET_IDS[sliderTime + userTimezone]);
+  }, [sliderTime, userTimezone]);
 
   function initialMapAnimation() {
     if (mapRef.current) {
@@ -54,6 +79,7 @@ export default function Home() {
       setMaxBounds(MAP_BOUNDARY);
       setTimeout(() => {
         setMapControls(true);
+        setDayPlaying(true);
       }, 4000);
     }
 }
@@ -86,7 +112,6 @@ export default function Home() {
   }
 
   function onTimeChange(event: Event, value: number) {
-    setTilesetID(TILESET_IDS[value + userTimezone]);
     setSliderTime(value);
     if (value + userTimezone > 23) {
       setSliderDate(new Date(sliderDate.getDate() + 1));
@@ -109,8 +134,28 @@ export default function Home() {
     }
   }
 
+  function onPlayPauseClick() {
+    setDayPlaying(!dayPlaying);
+  }
+
   function onCloseInfoClick() {
     setShowInfo(false);
+  }
+
+  function onSkipClicked(increment: number) {
+    if (dayPlaying) {
+      setDayPlaying(false);
+    }
+    if (sliderTime + increment > 23) {
+      setSliderTime(0);
+    }
+    else if (sliderTime + increment < 0) {
+      setSliderTime(23);
+    }
+    else {
+      setSliderTime(sliderTime + increment);
+    }
+    
   }
 
   return (
@@ -140,12 +185,13 @@ export default function Home() {
         dragPan={mapControlsEnabled}
         keyboard={mapControlsEnabled}
       >
-        <Source type='vector' url={'mapbox://samctensen.' + tilesetID}>
+        <Source type='vector' url={'mapbox://' + process.env.NEXT_PUBLIC_MAPBOX_USERNAME + '.' + tilesetID}>
           <Layer {...ParticleMatterLayer} />
         </Source>
       </MapGL>
       <MapLegend />
       <DateSlider sliderDays={sliderDays} onDateChange={onDateChange} />
+      <MediaControls playing={dayPlaying} onPlayPauseClicked={onPlayPauseClick} onSkipClicked={onSkipClicked}/>
       <TimeSlider sliderValue={sliderTime} onTimeChange={onTimeChange} />
       {showInfo && (
         <LocationInfo close={onCloseInfoClick} latLng={clickedLatLng} pm25={clickedPM25} />

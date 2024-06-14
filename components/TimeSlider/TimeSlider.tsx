@@ -15,13 +15,11 @@ export const TimeSlider = ({ sliderValue, onTimeChange }: TimeSliderProps) => {
             <Slider
                 sx={{
                     color: '#000000',
-                    height: '100%',
-                    width: '230px',
+                    height: '7px',
+                    width: '220px',
                     justifyContent: 'center',
-                    borderBottomLeftRadius: '0px',
-                    borderBottomRightRadius: '0px',
                     '& .MuiSlider-thumb': {
-                    backgroundColor: '#C9C9C9',
+                    backgroundColor: '#FFFFFF',
                     color: '#FFFFFF',
                     '&:hover, &.Mui-focusVisible': {
                         boxShadow: 'none'
@@ -31,13 +29,13 @@ export const TimeSlider = ({ sliderValue, onTimeChange }: TimeSliderProps) => {
                     },
                     },
                     '& .MuiSlider-mark': {
-                    backgroundColor: '#C9C9C9',
-                    },
-                    '& .MuiSlider-markActive': {
                     backgroundColor: '#FFFFFF',
                     },
-                    '& .MuiSlider-track': {
+                    '& .MuiSlider-markActive': {
                     backgroundColor: '#000000',
+                    },
+                    '& .MuiSlider-track': {
+                    backgroundColor: '#FFFFFF',
                     },
                     '& .MuiSlider-valueLabel': {
                     backgroundColor: '#000000',
@@ -53,9 +51,9 @@ export const TimeSlider = ({ sliderValue, onTimeChange }: TimeSliderProps) => {
                 valueLabelDisplay="auto"
                 valueLabelFormat={(value) => `${value % 12 === 0 ? 12 : value % 12} ${value >= 12 ? 'PM' : 'AM'}`}
                 step={1}
-                marks
                 min={0}
                 max={23}
+                marks
                 value={sliderValue}
                 onChange={onTimeChange}
             />

@@ -1020,8 +1020,8 @@ export const ParticleMatterLayer: CircleLayer = {
       [
         'zoom'
       ],
-      2, 4,
-      3, 6,
+      2, 2,
+      3, 3,
       4, 8,
       6, 15,
       7, 20,
@@ -1054,9 +1054,9 @@ export const ParticleMatterLayer: CircleLayer = {
       [
         'zoom'
       ],
-      2, 0.3,
-      4, 0.4,
-      6, 0.5,
+      2, 0,
+      4, 0,
+      6, 0.2,
       7, 0.6,
       8, 0.7,
       9, 0.8,
