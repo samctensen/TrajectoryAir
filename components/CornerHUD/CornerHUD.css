@@ -1,11 +1,13 @@
 .corner-logo {
     background-color: transparent;
     position: absolute;
+    width: 300px;
     top: 10px;
     left: 15px;
     z-index: 10;
+    pointer-events: none;
 }
-    
+
 .hud-fade-in {
     animation: fadeIn 1s forwards;
 }

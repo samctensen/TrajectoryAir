@@ -146,7 +146,6 @@ export default function Home() {
 
   function onCloseInfoClick() {
     setShowInfo(false);
-    setShowCornerHUD(true);
   }
 
   function onSkipClicked(increment: number) {
