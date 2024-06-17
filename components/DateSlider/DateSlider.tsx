@@ -12,7 +12,7 @@ export const DateSlider = ({ sliderDays, onDateChange }: DateSliderProps) => {
   const sliderRef = useRef<Slider>(null);
 
   return (
-    <div className='slider-container'>=
+    <div className='slider-container'>
       <Slider
         ref={sliderRef}
         beforeChange={onDateChange}

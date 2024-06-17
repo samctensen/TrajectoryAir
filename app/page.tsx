@@ -1,4 +1,5 @@
 'use client';
+import { CornerHUD } from '@/components/CornerHUD/CornerHUD';
 import { DateSlider } from '@/components/DateSlider/DateSlider';
 import { LocationInfo } from '@/components/LocationInfo/LocationInfo';
 import { Logo } from '@/components/Logo/Logo';
@@ -32,6 +33,8 @@ export default function Home() {
   const [tilesetID, setTilesetID] = useState(TILESET_IDS[(userTime.getMinutes() < 30 ? userTime.getHours() : userTime.getHours() + 1) + userTimezone]);
   const [maxBounds, setMaxBounds] = useState<LngLatBoundsLike | null>(null);
   const [showLogo, setShowLogo] = useState(true);
+  const [showCornerHUD, setShowCornerHUD] = useState(false);
+  const [animationDone, setAnimationDone] = useState(false);
   const [dayPlaying, setDayPlaying] = useState(false);
   const [mapControlsEnabled, setMapControls] = useState(false);
   const firstDate = new Date('2024-05-15');
@@ -78,9 +81,11 @@ export default function Home() {
       });
       setMaxBounds(MAP_BOUNDARY);
       setTimeout(() => {
+        setAnimationDone(true);
         setMapControls(true);
         setDayPlaying(true);
-      }, 4000);
+        setShowCornerHUD(true);
+      }, 3500);
     }
 }
 
@@ -121,6 +126,7 @@ export default function Home() {
 
   function onMapClick(event: MapLayerMouseEvent) {
     if (mapControlsEnabled) {
+      setShowCornerHUD(false);
       mapRef.current?.flyTo({ center: event.lngLat, zoom: 8, duration: 1500 });
       setShowInfo(true);
       setClickedLatLng([event.lngLat.lat, event.lngLat.lng]);
@@ -140,6 +146,7 @@ export default function Home() {
 
   function onCloseInfoClick() {
     setShowInfo(false);
+    setShowCornerHUD(true);
   }
 
   function onSkipClicked(increment: number) {
@@ -159,8 +166,9 @@ export default function Home() {
   }
 
   return (
-    <main className='h-full w-full relative'>
+    <main>
       {showLogo && <Logo />}
+      {animationDone && <CornerHUD time={sliderTime} showHUD={showCornerHUD}/>}
       <MapGL
         ref={mapRef}
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
