@@ -33,6 +33,7 @@ export default function Home() {
   const [tilesetID, setTilesetID] = useState(TILESET_IDS[(userTime.getMinutes() < 30 ? userTime.getHours() : userTime.getHours() + 1) + userTimezone]);
   const [maxBounds, setMaxBounds] = useState<LngLatBoundsLike | null>(null);
   const [showLogo, setShowLogo] = useState(true);
+  const [showLegend, setShowLegend] = useState(true);
   const [showCornerHUD, setShowCornerHUD] = useState(false);
   const [animationDone, setAnimationDone] = useState(false);
   const [dayPlaying, setDayPlaying] = useState(false);
@@ -148,6 +149,11 @@ export default function Home() {
     setShowInfo(false);
   }
 
+  function onLegendButtonClick() {
+    setShowLegend(!showLegend);
+    console.log(showLegend)
+  }
+
   function onSkipClicked(increment: number) {
     if (dayPlaying) {
       setDayPlaying(false);
@@ -196,7 +202,7 @@ export default function Home() {
           <Layer {...ParticleMatterLayer} />
         </Source>
       </MapGL>
-      <MapLegend />
+      {animationDone && <MapLegend showLegend={showLegend} onClick={onLegendButtonClick}/>}
       <DateSlider sliderDays={sliderDays} onDateChange={onDateChange} />
       <MediaControls playing={dayPlaying} onPlayPauseClicked={onPlayPauseClick} onSkipClicked={onSkipClicked}/>
       <TimeSlider sliderValue={sliderTime} onTimeChange={onTimeChange} />

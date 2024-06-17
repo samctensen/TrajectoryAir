@@ -1,32 +1,51 @@
+import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './MapLegend.css';
 
-export const MapLegend = () => {
-    const pm25Levels = [
-        { value: 6, label: '6', position: '5%' },
-        { value: 23.75, label: '23.75', position: '20%' },
-        { value: 45.5, label: '45.5', position: '35%' },
-        { value: 103, label: '103', position: '55%' },
-        { value: 200.5, label: '200.5', position: '80%' },
-        { value: 250, label: '250', position: '90%' },
-    ];
+interface MapLegendProps {
+    showLegend: boolean,
+    onClick: () => void
+}
+
+export const MapLegend = ({showLegend, onClick}: MapLegendProps) => {
 
     return (
-        <div>
-        <div className='legend-container'>
-            <div className='legend'>
-                {pm25Levels.map((level, index) => (
-                    <div key={index} className='legend-mark' style={{ bottom: level.position }} />
-                ))}
+        <div className={`legend ${showLegend ? 'legend-slide-in' : 'legend-slide-out'}`}>
+            <button className='legend-button' onClick={onClick}>
+                    <FontAwesomeIcon icon={showLegend ? faAngleRight : faAngleLeft} className='text-white' style={{ transform: 'scaleY(2)' }}/>
+            </button>
+            <div className='legend-container'>
+                <div className='legend-row'>
+                        <div className='legend-color' style={{ backgroundColor: '#00E400' }} />
+                        <hr className="legend-line" />
+                        <h1 className='text-2s text-white ml-1'>Good</h1>
+                </div>
+                <div className='legend-row'>
+                        <div className='legend-color' style={{ backgroundColor: '#FFFF00' }} />
+                        <hr className="legend-line" />
+                        <h1 className='text-2s text-white ml-1'>Moderate</h1>
+                </div>
+                <div className='legend-row'>
+                        <div className='legend-color' style={{ backgroundColor: '#FF7E00' }} />
+                        <hr className="legend-line" />
+                        <h1 className='text-2s text-white ml-1'>Unhealthy for Sensitive Groups</h1>
+                </div>
+                <div className='legend-row'>
+                        <div className='legend-color' style={{ backgroundColor: '#FF0000' }} />
+                        <hr className="legend-line" />
+                        <h1 className='text-2s text-white ml-1'>Unhealthy for Everyone</h1>
+                </div>
+                <div className='legend-row'>
+                        <div className='legend-color' style={{ backgroundColor: '#8F3F97' }} />
+                        <hr className="legend-line" />
+                        <h1 className='text-2s text-white ml-1'>Very Unhealthy</h1>
+                </div>
+                <div className='legend-row'>
+                        <div className='legend-color' style={{ backgroundColor: '#7E0023' }} />
+                        <hr className="legend-line" />
+                        <h1 className='text-2s text-white ml-1'>Hazardous</h1>
+                </div>
             </div>
-            <div className='legend-labels'>
-                {pm25Levels.map((level, index) => (
-                    <div key={index} className='legend-label' style={{ bottom: level.position }}>
-                        {level.label}
-                    </div>
-                ))}
-            </div>
-        </div>
-        <div className='legend-title'>PM 2.5 Level</div>
         </div>
     );
 };
