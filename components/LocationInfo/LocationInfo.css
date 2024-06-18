@@ -32,3 +32,10 @@
 .slide-in {
     animation: slideIn 0.5s forwards;
 }
+
+.location-line {
+    border-top: 2px solid white;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    width: 300px
+}

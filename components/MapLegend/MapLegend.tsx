@@ -16,24 +16,9 @@ export const MapLegend = ({showLegend, onClick}: MapLegendProps) => {
             </button>
             <div className='legend-container'>
                 <div className='legend-row'>
-                        <div className='legend-color' style={{ backgroundColor: '#00E400' }} />
+                        <div className='legend-color' style={{ backgroundColor: '#7E0023' }} />
                         <hr className="legend-line" />
-                        <h1 className='text-2s text-white ml-1'>Good</h1>
-                </div>
-                <div className='legend-row'>
-                        <div className='legend-color' style={{ backgroundColor: '#FFFF00' }} />
-                        <hr className="legend-line" />
-                        <h1 className='text-2s text-white ml-1'>Moderate</h1>
-                </div>
-                <div className='legend-row'>
-                        <div className='legend-color' style={{ backgroundColor: '#FF7E00' }} />
-                        <hr className="legend-line" />
-                        <h1 className='text-2s text-white ml-1'>Unhealthy for Sensitive Groups</h1>
-                </div>
-                <div className='legend-row'>
-                        <div className='legend-color' style={{ backgroundColor: '#FF0000' }} />
-                        <hr className="legend-line" />
-                        <h1 className='text-2s text-white ml-1'>Unhealthy for Everyone</h1>
+                        <h1 className='text-2s text-white ml-1'>Hazardous</h1>
                 </div>
                 <div className='legend-row'>
                         <div className='legend-color' style={{ backgroundColor: '#8F3F97' }} />
@@ -41,9 +26,24 @@ export const MapLegend = ({showLegend, onClick}: MapLegendProps) => {
                         <h1 className='text-2s text-white ml-1'>Very Unhealthy</h1>
                 </div>
                 <div className='legend-row'>
-                        <div className='legend-color' style={{ backgroundColor: '#7E0023' }} />
+                        <div className='legend-color' style={{ backgroundColor: '#FF0000' }} />
                         <hr className="legend-line" />
-                        <h1 className='text-2s text-white ml-1'>Hazardous</h1>
+                        <h1 className='text-2s text-white ml-1'>Unhealthy for Everyone</h1>
+                </div>
+                <div className='legend-row'>
+                        <div className='legend-color' style={{ backgroundColor: '#FF7E00' }} />
+                        <hr className="legend-line" />
+                        <h1 className='text-2s text-white ml-1'>Unhealthy for Sensitive Groups</h1>
+                </div>
+                <div className='legend-row'>
+                        <div className='legend-color' style={{ backgroundColor: '#FFFF00' }} />
+                        <hr className="legend-line" />
+                        <h1 className='text-2s text-white ml-1'>Moderate</h1>
+                </div>
+                <div className='legend-row'>
+                        <div className='legend-color' style={{ backgroundColor: '#00E400' }} />
+                        <hr className="legend-line" />
+                        <h1 className='text-2s text-white ml-1'>Good</h1>
                 </div>
             </div>
         </div>

@@ -28,7 +28,7 @@ export default function Home() {
   const [showInfo, setShowInfo] = useState(false);
   const [clickedLatLng, setClickedLatLng] = useState<[number, number] | null>(null);
   const [clickedPM25, setClickedPM25] = useState<number>(0);
-  const [sliderDate, setSliderDate] = useState(new Date('2024-05-15'));
+  const [sliderDate, setSliderDate] = useState(new Date());
   const [sliderTime, setSliderTime] = useState(userTime.getMinutes() < 30 ? userTime.getHours() : userTime.getHours() + 1);
   const [tilesetID, setTilesetID] = useState(TILESET_IDS[(userTime.getMinutes() < 30 ? userTime.getHours() : userTime.getHours() + 1) + userTimezone]);
   const [maxBounds, setMaxBounds] = useState<LngLatBoundsLike | null>(null);
@@ -38,7 +38,7 @@ export default function Home() {
   const [animationDone, setAnimationDone] = useState(false);
   const [dayPlaying, setDayPlaying] = useState(false);
   const [mapControlsEnabled, setMapControls] = useState(false);
-  const firstDate = new Date('2024-05-15');
+  const firstDate = new Date();
   const sliderDays = getNextDays(5);
 
   useEffect(() => {
@@ -173,7 +173,7 @@ export default function Home() {
   return (
     <main>
       {showLogo && <Logo />}
-      {animationDone && <CornerHUD time={sliderTime} showHUD={showCornerHUD}/>}
+      {animationDone && <CornerHUD time={sliderTime} sliderDate={sliderDate} showHUD={showCornerHUD}/>}
       <MapGL
         ref={mapRef}
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}

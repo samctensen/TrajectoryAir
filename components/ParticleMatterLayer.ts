@@ -1037,14 +1037,11 @@ export const ParticleMatterLayer: CircleLayer = {
       [
         'zoom'
       ],
-      2, 0.018,
+      2, 0.01,
       3, 0.018,
       4, 0.018,
-      6, 0.02,
-      7, 0.02,
-      8, 0.02,
-      9, 0.02,
-      10, 0.02,
+      6, 0.04,
+      10, 0.1,
     ],
     'circle-blur': [
       'interpolate',
