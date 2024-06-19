@@ -13,9 +13,8 @@ import '@fortawesome/fontawesome-svg-core/styles.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useEffect, useRef, useState } from 'react';
 import MapGL, { Layer, LngLatBoundsLike, MapLayerMouseEvent, MapRef, Source } from 'react-map-gl';
-import 'slick-carousel/slick/slick-theme.css';
-import 'slick-carousel/slick/slick.css';
 import { ParticleMatterLayer } from '../components/ParticleMatterLayer';
+
 config.autoAddCss = false;
 
 export default function Home() {
@@ -88,7 +87,7 @@ export default function Home() {
         setShowCornerHUD(true);
       }, 3500);
     }
-}
+  }
 
   function getNextDays(days: number) {
     const dates = [];
@@ -151,7 +150,6 @@ export default function Home() {
 
   function onLegendButtonClick() {
     setShowLegend(!showLegend);
-    console.log(showLegend)
   }
 
   function onSkipClicked(increment: number) {
@@ -167,13 +165,19 @@ export default function Home() {
     else {
       setSliderTime(sliderTime + increment);
     }
-    
   }
 
   return (
     <main>
       {showLogo && <Logo />}
       {animationDone && <CornerHUD time={sliderTime} sliderDate={sliderDate} showHUD={showCornerHUD}/>}
+      {animationDone && <MapLegend showLegend={showLegend} onClick={onLegendButtonClick}/>}
+      <DateSlider sliderDays={sliderDays} onDateChange={onDateChange} />
+      <MediaControls playing={dayPlaying} onPlayPauseClicked={onPlayPauseClick} onSkipClicked={onSkipClicked}/>
+      <TimeSlider sliderValue={sliderTime} onTimeChange={onTimeChange} />
+      {showInfo && (
+        <LocationInfo close={onCloseInfoClick} latLng={clickedLatLng} pm25={clickedPM25} />
+      )}
       <MapGL
         ref={mapRef}
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
@@ -202,13 +206,6 @@ export default function Home() {
           <Layer {...ParticleMatterLayer} />
         </Source>
       </MapGL>
-      {animationDone && <MapLegend showLegend={showLegend} onClick={onLegendButtonClick}/>}
-      <DateSlider sliderDays={sliderDays} onDateChange={onDateChange} />
-      <MediaControls playing={dayPlaying} onPlayPauseClicked={onPlayPauseClick} onSkipClicked={onSkipClicked}/>
-      <TimeSlider sliderValue={sliderTime} onTimeChange={onTimeChange} />
-      {showInfo && (
-        <LocationInfo close={onCloseInfoClick} latLng={clickedLatLng} pm25={clickedPM25} />
-      )}
     </main>
   );
 }

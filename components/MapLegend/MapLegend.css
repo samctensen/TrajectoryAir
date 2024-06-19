@@ -1,23 +1,21 @@
 .legend {
     display: flex;
     flex-direction: row;
-    align-items: flex-end;
     background-color: black;
     align-items: center;
     position: absolute;
     top: 10%;
-    right: 0px;
+    right: 0;
     padding-left: 10px;
     padding-right: 5px;
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
+    z-index: 10;
 }
 
 .legend-container {
-   
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
     background-color: black;
     align-items: flex-start;
     padding-top: 5px;
@@ -45,28 +43,30 @@
     width: 7px;
 }
 
-@keyframes legendSlideIn {
+@keyframes legend-slide-in {
     from {
-        transform: translateX(92%);
+        transform: translateX(286px);
     }
+
     to {
         transform: translateX(0%);
     }
 }
 
 .legend-slide-in {
-    animation: legendSlideIn 0.5s forwards;
+    animation: legend-slide-in 0.5s forwards;
 }
 
-@keyframes legendSlideOut {
+@keyframes legend-slide-out {
     from {
         transform: translateX(0%);
     }
+
     to {
-        transform: translateX(92%);
+        transform: translateX(286px);
     }
 }
 
 .legend-slide-out {
-    animation: legendSlideOut 0.5s forwards;
+    animation: legend-slide-out 0.5s forwards;
 }

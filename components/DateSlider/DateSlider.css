@@ -13,6 +13,8 @@
     border-bottom-left-radius: 15px;
     border-bottom-right-radius: 15px;
     margin-bottom: 25px;
+    z-index: 10;
+    cursor: pointer;
 }
   
 .slide-content {
@@ -29,6 +31,6 @@
     flex: 1;
 }
   
-.slick-dots li.slick-active button:before {
+.slick-dots li.slick-active button::before {
     color:white !important;
 }

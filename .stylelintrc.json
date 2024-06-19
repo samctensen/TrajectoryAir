@@ -1,0 +1,16 @@
+{ 
+    "extends": ["stylelint-config-clean-order/error"],
+    "plugins": [
+		"stylelint-order"
+	],
+	"rules": {
+		"order/order": [
+			"custom-properties",
+			"declarations"
+		],
+		"order/properties-order": [
+			"width",
+			"height"
+		]
+	}
+}

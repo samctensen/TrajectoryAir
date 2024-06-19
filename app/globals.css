@@ -1,3 +1,6 @@
+/* stylelint-disable at-rule-no-unknown */
+/* stylelint-disable selector-id-pattern */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -17,8 +20,8 @@ body {
 }
 
 main {
-  height: 100%;
   width: 100%;
+  height: 100%;
 }
 
 html, #__next {
@@ -27,19 +30,21 @@ html, #__next {
   padding: 0;
 }
 
-@keyframes fadeOut {
+@keyframes fade-out {
   from {
     opacity: 1;
   }
+
   to {
     opacity: 0;
   }
 }
 
-@keyframes fadeIn {
+@keyframes fade-in {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }

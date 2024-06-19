@@ -17,7 +17,7 @@ export const Logo = () => {
   return (
     <div
       className={`flex items-center justify-center h-screen w-screen absolute top-0 left-0 z-10 pointer-events-none 
-        ${fadeOut ? 'fade-out' : ''}`}
+        ${fadeOut ? 'logo-fade-out' : ''}`}
     >
       <div className='text-center pointer-events-auto'>
         <h1 className='text-6xl font-bold text-white'>
