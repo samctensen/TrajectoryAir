@@ -22,7 +22,7 @@ Before running, you need to install homebrew, node, npx, and clone the repo
 
 ### Running the Development Server
 Now that everything is installed, the simulator can be ran
-* Enter the /trajectoryair project folder
+* Enter the ```/trajectoryair/``` project folder
     ```
     npm run dev
     ```
