@@ -15,3 +15,19 @@ export const TILESET_IDS = ['8qc1eprt', '34y2u5uc', '29euf63c', '4xypovov', 'd2l
 ];
 
 export const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+export const LAYER_OPACITY: mapboxgl.Expression = 
+[
+    'interpolate',
+    [
+      'linear'
+    ],
+    [
+      'zoom'
+    ],
+    2, 0.01,
+    3, 0.018,
+    4, 0.018,
+    6, 0.04,
+    10, 0.1,
+]
