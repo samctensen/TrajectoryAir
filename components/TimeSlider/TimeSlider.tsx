@@ -56,6 +56,7 @@ export const TimeSlider = ({ sliderValue, onTimeChange }: TimeSliderProps) => {
                 marks
                 value={sliderValue}
                 onChange={onTimeChange}
+                disabled={true}
             />
         </div>
     );

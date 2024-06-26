@@ -23,12 +23,8 @@ export default function Home() {
   const [clickedPM25, setClickedPM25] = useState<number>(0);
   const [sliderDate, setSliderDate] = useState(new Date());
   const [sliderTime, setSliderTime] = useState(userTime.getMinutes() < 30 ? userTime.getHours() : userTime.getHours() + 1);
-  const [firstTilesetID, setFirstTilesetID] = useState(TILESET_IDS[(sliderTime - 2)% 24 + userTimezone]);
-  const [secondTilesetID, setSecondTilesetID] = useState(TILESET_IDS[(sliderTime - 1) % 24 + userTimezone]);
-  const [thirdTilesetID, setThirdTilesetID] = useState(TILESET_IDS[sliderTime % 24 + userTimezone]);
-  const [fourthTilesetID, setForuthTilesetID] = useState(TILESET_IDS[(sliderTime + 1) % 24 + userTimezone]);
-  const [fifthTilesetID, setFifthTilesetID] = useState(TILESET_IDS[(sliderTime + 2) % 24 + userTimezone]);
-  const [activeLayer, setActiveLayer] = useState(3);
+  const [activeLayer, setActiveLayer] = useState(["ParticleMatterLayer2"]);
+  const [tilesetIDs, setTilesetIDs] = useState([TILESET_IDS[(sliderTime - 2)% 24 + userTimezone], TILESET_IDS[(sliderTime - 1) % 24 + userTimezone], TILESET_IDS[sliderTime % 24 + userTimezone], TILESET_IDS[(sliderTime + 1) % 24 + userTimezone], TILESET_IDS[(sliderTime + 2) % 24 + userTimezone]]);
   const [maxBounds, setMaxBounds] = useState<LngLatBoundsLike | null>(null);
   const [showLogo, setShowLogo] = useState(true);
   const [showLegend, setShowLegend] = useState(true);
@@ -42,9 +38,26 @@ export default function Home() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowLogo(false);
+      setDayPlaying(true);
     }, 2500);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (dayPlaying) {
+      interval = setInterval(() => {
+        onSkipClicked(1);
+      }, 2000);
+    } else if (interval) {
+      clearInterval(interval);
+    }
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [dayPlaying, onSkipClicked]);
 
   function initialMapAnimation() {
     if (mapRef.current) {
@@ -96,7 +109,6 @@ export default function Home() {
     if (value + userTimezone > 23) {
       setSliderDate(new Date(sliderDate.getDate() + 1));
     }
-    setFirstTilesetID(TILESET_IDS[value + userTimezone]);
   }
 
   function onMapClick(event: MapLayerMouseEvent) {
@@ -134,7 +146,10 @@ export default function Home() {
   }
 
   function getActiveLayer(): number {
-    if (mapRef.current?.getMap().getPaintProperty('ParticleMatterLayer1', 'circle-opacity') != 0) {
+    if (mapRef.current?.getMap().getPaintProperty('ParticleMatterLayer0', 'circle-opacity') != 0) {
+      return 0;
+    }
+    else if (mapRef.current?.getMap().getPaintProperty('ParticleMatterLayer1', 'circle-opacity') != 0) {
       return 1;
     }
     else if (mapRef.current?.getMap().getPaintProperty('ParticleMatterLayer2', 'circle-opacity') != 0) {
@@ -143,54 +158,25 @@ export default function Home() {
     else if (mapRef.current?.getMap().getPaintProperty('ParticleMatterLayer3', 'circle-opacity') != 0) {
       return 3;
     }
-    else if (mapRef.current?.getMap().getPaintProperty('ParticleMatterLayer4', 'circle-opacity') != 0) {
-      return 4;
-    }
     else {
-      return 5;
+      return 4;
     }
   }
 
   function onSkipClicked(increment: number) {
-    if (dayPlaying) {
-      setDayPlaying(false);
-    }
     let newTime = sliderTime + increment;
     if (newTime > 23) {
       newTime = 0;
     } else if (newTime < 0) {
       newTime = 23;
     }
-    else {
-      setSliderTime(sliderTime + increment);
-    }
     const activeLayer = getActiveLayer();
-    // First Layer is currently displayed
-    if (activeLayer == 1) {
-      setForuthTilesetID(TILESET_IDS[newTime + userTimezone + 2]);
-      mapRef.current?.getMap().setPaintProperty('ParticleMatterLayer2', 'circle-opacity', LAYER_OPACITY);
-      mapRef.current?.getMap().setPaintProperty('ParticleMatterLayer1', 'circle-opacity', 0);
-    }
-    else if (activeLayer == 2) { 
-      setFifthTilesetID(TILESET_IDS[newTime + userTimezone + 2]);
-      mapRef.current?.getMap().setPaintProperty('ParticleMatterLayer3', 'circle-opacity', LAYER_OPACITY);
-      mapRef.current?.getMap().setPaintProperty('ParticleMatterLayer2', 'circle-opacity', 0);
-    }
-    else if (activeLayer == 3) {
-      setFirstTilesetID(TILESET_IDS[newTime + userTimezone] + 2);
-      mapRef.current?.getMap().setPaintProperty('ParticleMatterLayer4', 'circle-opacity', LAYER_OPACITY);
-      mapRef.current?.getMap().setPaintProperty('ParticleMatterLayer3', 'circle-opacity', 0);
-    }
-    else if (activeLayer == 4) {
-      setSecondTilesetID(TILESET_IDS[newTime + userTimezone] + 2);
-      mapRef.current?.getMap().setPaintProperty('ParticleMatterLayer5', 'circle-opacity', LAYER_OPACITY);
-      mapRef.current?.getMap().setPaintProperty('ParticleMatterLayer4', 'circle-opacity', 0);
-    }
-    else if (activeLayer == 5) {
-      setThirdTilesetID(TILESET_IDS[newTime + userTimezone] + 2);
-      mapRef.current?.getMap().setPaintProperty('ParticleMatterLayer1', 'circle-opacity', LAYER_OPACITY);
-      mapRef.current?.getMap().setPaintProperty('ParticleMatterLayer5', 'circle-opacity', 0);
-    }
+    const nextLayer = (newTime + userTimezone + 2) % TILESET_IDS.length;
+    setTilesetIDs(tilesetIDs.with((activeLayer + 3) % 5, TILESET_IDS[nextLayer]));
+    mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-opacity', 0);
+    mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${(activeLayer + 1) % 5}`, 'circle-opacity', LAYER_OPACITY);
+    setActiveLayer([`ParticleMatterLayer${(activeLayer + 1) % 5}`])
+    setSliderTime(newTime);
   }
 
   return (
@@ -218,7 +204,7 @@ export default function Home() {
           mapStyle='mapbox://styles/mapbox/dark-v11'
           maxZoom={10}
           style={{ width: '100%', height: '100%' }}
-          interactiveLayerIds={['PMLayer01']}
+          interactiveLayerIds={activeLayer}
           onClick={onMapClick}
           onLoad={initialMapAnimation}
           maxBounds={maxBounds!}
@@ -229,20 +215,20 @@ export default function Home() {
           dragPan={mapControlsEnabled}
           keyboard={mapControlsEnabled}
         >
-          <Source type='vector' url={'mapbox://' + process.env.NEXT_PUBLIC_MAPBOX_USERNAME + '.' + firstTilesetID}>
+          <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[0]}`}>
+            <Layer {...ParticleMatterLayer("ParticleMatterLayer0", 0)}/>
+          </Source>
+          <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[1]}`}>
             <Layer {...ParticleMatterLayer("ParticleMatterLayer1", 0)}/>
           </Source>
-          <Source type='vector' url={'mapbox://' + process.env.NEXT_PUBLIC_MAPBOX_USERNAME + '.' + secondTilesetID}>
-            <Layer {...ParticleMatterLayer("ParticleMatterLayer2", 0)}/>
+          <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[2]}`}>
+            <Layer {...ParticleMatterLayer("ParticleMatterLayer2", LAYER_OPACITY)}/>
           </Source>
-          <Source type='vector' url={'mapbox://' + process.env.NEXT_PUBLIC_MAPBOX_USERNAME + '.' + thirdTilesetID}>
-            <Layer {...ParticleMatterLayer("ParticleMatterLayer3", LAYER_OPACITY)}/>
+          <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[3]}`}>
+            <Layer {...ParticleMatterLayer("ParticleMatterLayer3", 0)}/>
           </Source>
-          <Source type='vector' url={'mapbox://' + process.env.NEXT_PUBLIC_MAPBOX_USERNAME + '.' + fourthTilesetID}>
+          <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[4]}`}>
             <Layer {...ParticleMatterLayer("ParticleMatterLayer4", 0)}/>
-          </Source>
-          <Source type='vector' url={'mapbox://' + process.env.NEXT_PUBLIC_MAPBOX_USERNAME + '.' + fifthTilesetID}>
-            <Layer {...ParticleMatterLayer("ParticleMatterLayer5", 0)}/>
           </Source>
         </MapGL>
     </main>
