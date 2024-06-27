@@ -1,4 +1,4 @@
-import { DAYS_OF_WEEK } from '@/constants/constants';
+import { DAYS_OF_WEEK } from '@/constants';
 import { faWind } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './CornerHUD.css';
