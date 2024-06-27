@@ -1,7 +1,8 @@
 'use client';
 import { CornerHUD, DateSlider, LocationInfo, Logo, MapLegend, MediaControls, ParticleMatterLayer, TimeSlider } from '@/components';
 import useUserLocation from '@/components/useUserLocation';
-import { LAYER_OPACITY, MAP_BOUNDARY, TILESET_IDS, U_OF_U_DEFAULT_COORDS } from '@/constants/constants';
+import { LAYER_OPACITY, MAP_BOUNDARY, TILESET_IDS, U_OF_U_DEFAULT_COORDS } from '@/constants';
+import { negativeModulo } from '@/functions';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -24,7 +25,7 @@ export default function Home() {
   const [sliderDate, setSliderDate] = useState(new Date());
   const [sliderTime, setSliderTime] = useState(userTime.getMinutes() < 30 ? userTime.getHours() : userTime.getHours() + 1);
   const [activeLayer, setActiveLayer] = useState(["ParticleMatterLayer2"]);
-  const [tilesetIDs, setTilesetIDs] = useState([TILESET_IDS[(sliderTime - 2)% 24 + userTimezone], TILESET_IDS[(sliderTime - 1) % 24 + userTimezone], TILESET_IDS[sliderTime % 24 + userTimezone], TILESET_IDS[(sliderTime + 1) % 24 + userTimezone], TILESET_IDS[(sliderTime + 2) % 24 + userTimezone]]);
+  const [tilesetIDs, setTilesetIDs] = useState([TILESET_IDS[negativeModulo(sliderTime - 2, 24) + userTimezone], TILESET_IDS[negativeModulo(sliderTime - 1, 24) + userTimezone], TILESET_IDS[sliderTime % 24 + userTimezone], TILESET_IDS[(sliderTime + 1) % 24 + userTimezone], TILESET_IDS[(sliderTime + 2) % 24 + userTimezone]]);
   const [maxBounds, setMaxBounds] = useState<LngLatBoundsLike | null>(null);
   const [showLogo, setShowLogo] = useState(true);
   const [showLegend, setShowLegend] = useState(true);
@@ -38,7 +39,6 @@ export default function Home() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowLogo(false);
-      setDayPlaying(true);
     }, 2500);
     return () => clearTimeout(timer);
   }, []);
@@ -73,6 +73,7 @@ export default function Home() {
         setAnimationDone(true);
         setMapControls(true);
         setShowCornerHUD(true);
+        setDayPlaying(true);
       }, 3500);
     }
   }
@@ -164,18 +165,22 @@ export default function Home() {
   }
 
   function onSkipClicked(increment: number) {
-    let newTime = sliderTime + increment;
-    if (newTime > 23) {
-      newTime = 0;
-    } else if (newTime < 0) {
-      newTime = 23;
-    }
+    const newTime = negativeModulo(sliderTime + increment, 24);
     const activeLayer = getActiveLayer();
-    const nextLayer = (newTime + userTimezone + 2) % TILESET_IDS.length;
-    setTilesetIDs(tilesetIDs.with((activeLayer + 3) % 5, TILESET_IDS[nextLayer]));
-    mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-opacity', 0);
-    mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${(activeLayer + 1) % 5}`, 'circle-opacity', LAYER_OPACITY);
-    setActiveLayer([`ParticleMatterLayer${(activeLayer + 1) % 5}`])
+    if (increment > 0) {
+      const nextLayer = (newTime + userTimezone + 2) % TILESET_IDS.length;
+      setTilesetIDs(tilesetIDs.with((activeLayer + 3) % 5, TILESET_IDS[nextLayer]));
+      mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-opacity', 0);
+      mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${(activeLayer + 1) % 5}`, 'circle-opacity', LAYER_OPACITY);
+      setActiveLayer([`ParticleMatterLayer${(activeLayer + 1) % 5}`])
+    }
+    else {
+      const nextLayer = negativeModulo(newTime + userTimezone - 2,TILESET_IDS.length);
+      setTilesetIDs(tilesetIDs.with(negativeModulo(activeLayer - 3, 5), TILESET_IDS[nextLayer]));
+      mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-opacity', 0);
+      mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${negativeModulo(activeLayer - 1, 5)}`, 'circle-opacity', LAYER_OPACITY);
+      setActiveLayer([`ParticleMatterLayer${negativeModulo(activeLayer - 1, 5)}`])
+    }
     setSliderTime(newTime);
   }
 
