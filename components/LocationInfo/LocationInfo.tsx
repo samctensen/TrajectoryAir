@@ -67,25 +67,23 @@ export function LocationInfo({ close, latLng, currentPM25, currentTime}: Locatio
                     <FontAwesomeIcon icon={faX} className='text-white' />
                 </button>
                 <hr className='location-line mt-24' />
-                <div className='ml-8 mr-3 flex min-h-screen flex-col mt-1'>
-                    <div className='text-white mt-4'>
-                        <h3 className='text-2s font-bold text-white'>{latLng![0].toFixed(6)}, {latLng![1].toFixed(6)}</h3>
+                <div className='text-white mt-4 ml-3'>
+                        <h3 className='text-2s font-bold text-white'>{latLng![0].toFixed(2)}, {latLng![1].toFixed(2)}</h3>
                     </div>
                     {address != undefined && (
-                        <div className={`text-white ${address != undefined ? 'mt-3' : ''}`}>
+                        <div className={`text-white ml-3 ${address != undefined ? 'mt-3' : ''}`}>
                             <h3 className='text-2s font-bold text-white'>{address}</h3>
                         </div>
                     )}
-                    <div className='text-white mt-3'>
-                        <h3 className='text-2s font-bold text-white'>PM 2.5: {currentPM25 == 0 ? 0 : currentPM25.toFixed(6)}</h3>
+                    <div className='text-white mt-3 ml-3'>
+                        <h3 className='text-2s font-bold text-white'>PM-2.5: {currentPM25 == 0 ? 0 : currentPM25.toFixed(1)}</h3>
                     </div>
-                    <div className='text-white mt-3'>
+                    <div className='text-white mt-3 ml-3'>
                         <h3 className='text-2s font-bold text-white'>Air Quality: {getAirQuality(currentPM25)}</h3>
                     </div>
-                    <div className='mt-4'>
+                    <div className='mt-4 ml-3'>
                         <ParticleMatterGraph latLng={latLng!} currentPM25={currentPM25} currentTime={currentTime} />
                     </div>
-                </div>
             </div>
         );
     }

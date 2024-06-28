@@ -1,7 +1,7 @@
 import { TILESET_IDS } from "@/constants";
 import { useQueries } from "@tanstack/react-query";
 import { BarLoader } from "react-spinners";
-import { Line, LineChart, XAxis, YAxis } from "recharts";
+import { Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
 
 interface GraphProps {
     latLng: [number, number],
@@ -22,8 +22,7 @@ export const ParticleMatterGraph = ({ latLng, currentPM25, currentTime }: GraphP
             const data =  await response.json();
             return {
                 name: index,
-                amt: data.features[0] ? data.features[0].properties.PM25 : 0,
-                pm25: data.features[0] ? data.features[0].properties.PM25 : 0
+                "PM-2.5": data.features[0] ? parseFloat(data.features[0].properties.PM25.toFixed(1)) : 0
             }
           }
         }
@@ -35,6 +34,15 @@ export const ParticleMatterGraph = ({ latLng, currentPM25, currentTime }: GraphP
         }
       },
     });
+
+    const getColor = (value: number) => {
+      if (value <= 6) return '#00e400';
+      if (value <= 23.75) return '#ffff00';
+      if (value <= 45.5) return '#ff7e00'
+      if (value <= 103) return '#ff0000';
+      if (value <= 200.5) return '#8f3f97';
+      return '#7e0023';
+    };
 
     if (graphData.pending) {
         return (
@@ -49,13 +57,26 @@ export const ParticleMatterGraph = ({ latLng, currentPM25, currentTime }: GraphP
     else {
         return (
             <LineChart
-                width={200}
-                height={100}
+                width={280}
+                height={200}
                 data={graphData.data}
+                margin={{ top: 0, right: 20, left: 0, bottom: 0 }}
             >
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Line type="monotone" dataKey="pm25" stroke="#8884d8" dot={false}/>
+              <defs>
+                <linearGradient id="gradient" x1="0" y1="0" x2="1" y2="0">
+                  {graphData.data.map((entry, index) => (
+                    <stop
+                      key={index}
+                      offset={`${(index / (graphData.data.length - 1)) * 100}%`}
+                      stopColor={getColor(entry!["PM-2.5"])}
+                    />
+                  ))}
+                </linearGradient>
+              </defs>
+              <XAxis dataKey="name" stroke="#FFFFFF"/>
+              <YAxis stroke="#FFFFFF"/>
+              <Tooltip/>
+              <Line type="monotone" dataKey="PM-2.5" stroke="url(#gradient)" dot={false} strokeWidth={3} activeDot={{fill: "transparent"}}/>
             </LineChart>
         )
     }
