@@ -1,9 +1,17 @@
 import { faX } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
+import { ParticleMatterGraph } from '../ParticleMatterGraph/ParticleMatterGraph';
 import './LocationInfo.css';
 
-export function LocationInfo({ close, latLng, pm25 }: { close: () => void, latLng: [number, number] | null, pm25: number}) {
+interface LocationProps {
+    close: () => void,
+    latLng: [number, number] | null,
+    currentPM25: number,
+    currentTime: number,
+}
+
+export function LocationInfo({ close, latLng, currentPM25, currentTime}: LocationProps) {
     const [locationData, setLocationData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -69,10 +77,13 @@ export function LocationInfo({ close, latLng, pm25 }: { close: () => void, latLn
                         </div>
                     )}
                     <div className='text-white mt-3'>
-                        <h3 className='text-2s font-bold text-white'>PM 2.5: {pm25 == 0 ? 0 : pm25.toFixed(6)}</h3>
+                        <h3 className='text-2s font-bold text-white'>PM 2.5: {currentPM25 == 0 ? 0 : currentPM25.toFixed(6)}</h3>
                     </div>
                     <div className='text-white mt-3'>
-                        <h3 className='text-2s font-bold text-white'>Air Quality: {getAirQuality(pm25)}</h3>
+                        <h3 className='text-2s font-bold text-white'>Air Quality: {getAirQuality(currentPM25)}</h3>
+                    </div>
+                    <div className='mt-4'>
+                        <ParticleMatterGraph latLng={latLng!} currentPM25={currentPM25} currentTime={currentTime} />
                     </div>
                 </div>
             </div>

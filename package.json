@@ -25,6 +25,8 @@
     "react-dom": "^18.3.1",
     "react-map-gl": "^7.1.7",
     "react-slick": "^0.30.2",
+    "react-spinners": "^0.14.1",
+    "recharts": "^2.12.7",
     "slick-carousel": "^1.8.1"
   },
   "devDependencies": {

@@ -19,9 +19,9 @@ export default function Home() {
     const offsetSign = offsetInMinutes < 0 ? -1 : 1;
     return offsetSign * offsetHours;
   }, []);
-  const [showInfo, setShowInfo] = useState(false);
-  const [clickedLatLng, setClickedLatLng] = useState<[number, number] | null>(null);
-  const [clickedPM25, setClickedPM25] = useState<number>(0);
+  const [animationDone, setAnimationDone] = useState(false);
+  const [mapControlsEnabled, setMapControls] = useState(false);
+  const [dayPlaying, setDayPlaying] = useState(false);
   const [sliderDate, setSliderDate] = useState(new Date());
   const [sliderTime, setSliderTime] = useState(userTime.getMinutes() < 30 ? userTime.getHours() : userTime.getHours() + 1);
   const [activeLayer, setActiveLayer] = useState(["ParticleMatterLayer2"]);
@@ -30,9 +30,9 @@ export default function Home() {
   const [showLogo, setShowLogo] = useState(true);
   const [showLegend, setShowLegend] = useState(true);
   const [showCornerHUD, setShowCornerHUD] = useState(false);
-  const [animationDone, setAnimationDone] = useState(false);
-  const [dayPlaying, setDayPlaying] = useState(false);
-  const [mapControlsEnabled, setMapControls] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
+  const [clickedLatLng, setClickedLatLng] = useState<[number, number] | null>(null);
+  const [clickedPM25, setClickedPM25] = useState<number>(0);
   const firstDate = new Date();
   const sliderDays = getNextDays(5);
 
@@ -115,6 +115,7 @@ export default function Home() {
   function onMapClick(event: MapLayerMouseEvent) {
     if (mapControlsEnabled) {
       setShowInfo(true);
+      setDayPlaying(false);
       setShowCornerHUD(false);
       setClickedLatLng([event.lngLat.lat, event.lngLat.lng]);
       mapRef.current?.flyTo({
@@ -190,7 +191,7 @@ export default function Home() {
         {animationDone && <CornerHUD time={sliderTime} sliderDate={sliderDate} showHUD={showCornerHUD}/>}
         {animationDone && <MapLegend showLegend={showLegend} onClick={onLegendButtonClick}/>}
         {showInfo && (
-          <LocationInfo close={onCloseInfoClick} latLng={clickedLatLng} pm25={clickedPM25} />
+          <LocationInfo close={onCloseInfoClick} latLng={clickedLatLng} currentPM25={clickedPM25} currentTime={sliderTime} />
         )}
         <DateSlider sliderDays={sliderDays} onDateChange={onDateChange} />
         <MediaControls playing={dayPlaying} onPlayPauseClicked={onPlayPauseClick} onSkipClicked={onSkipClicked}/>
