@@ -1,4 +1,5 @@
 import { TILESET_IDS } from "@/constants";
+import { getColor } from "@/functions";
 import { useQueries } from "@tanstack/react-query";
 import { BarLoader } from "react-spinners";
 import { Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
@@ -34,15 +35,13 @@ export const ParticleMatterGraph = ({ latLng, currentPM25, currentTime }: GraphP
         }
       },
     });
-
-    const getColor = (value: number) => {
-      if (value <= 6) return '#00e400';
-      if (value <= 23.75) return '#ffff00';
-      if (value <= 45.5) return '#ff7e00'
-      if (value <= 103) return '#ff0000';
-      if (value <= 200.5) return '#8f3f97';
-      return '#7e0023';
+    const labelMap: { [key: number]: string } = {
+      12: "Good",
+      23: "Moderate",
+      45: "Unhealthy",
+      250: "Hazardous"
     };
+    const formatYAxisLabel = (value: number) => labelMap[value];
 
     if (graphData.pending) {
         return (
@@ -54,31 +53,56 @@ export const ParticleMatterGraph = ({ latLng, currentPM25, currentTime }: GraphP
             />
         );
     }
-    else {
-        return (
-            <LineChart
-                width={280}
-                height={200}
-                data={graphData.data}
-                margin={{ top: 0, right: 20, left: 0, bottom: 0 }}
-            >
-              <defs>
-                <linearGradient id="gradient" x1="0" y1="0" x2="1" y2="0">
-                  {graphData.data.map((entry, index) => (
-                    <stop
-                      key={index}
-                      offset={`${(index / (graphData.data.length - 1)) * 100}%`}
-                      stopColor={getColor(entry!["PM-2.5"])}
-                    />
-                  ))}
-                </linearGradient>
-              </defs>
-              <XAxis dataKey="name" stroke="#FFFFFF"/>
-              <YAxis stroke="#FFFFFF"/>
-              <Tooltip/>
-              <Line type="monotone" dataKey="PM-2.5" stroke="url(#gradient)" dot={false} strokeWidth={3} activeDot={{fill: "transparent"}}/>
-            </LineChart>
-        )
-    }
 
+    else {
+      const getMaxPM25Value = () => {
+        if (!graphData || graphData.data.length === 0) return 0;
+        const pm25Values = graphData.data.map(entry => entry ? entry["PM-2.5"] : 0);
+        return Math.max(...pm25Values);
+      };
+      const ticks = () => {
+        const maxPM25Value = getMaxPM25Value();
+        if (maxPM25Value < 20) return [12, 23];
+        if (maxPM25Value < 70) return [12, 23, 45];
+        if (maxPM25Value < 90) return [23, 45, 250];
+        if (maxPM25Value < 130) return [45, 250];
+        return [12, 23, 45, 250];
+      };
+      return (
+        <LineChart
+          width={280}
+          height={200}
+          data={graphData.data}
+          margin={{ top: 0, right: 20, left: 20, bottom: 0 }}
+        >
+          <defs>
+            <linearGradient id="gradient" x1="0" y1="0" x2="1" y2="0">
+              {graphData.data.map((entry, index) => (
+                <stop
+                  key={index}
+                  offset={`${(index / (graphData.data.length - 1)) * 100}%`}
+                  stopColor={entry ? getColor(entry["PM-2.5"]) : ""}
+                />
+              ))}
+            </linearGradient>
+          </defs>
+          <XAxis dataKey="name" stroke="#FFFFFF"/>
+          <YAxis 
+            stroke="#FFFFFF" 
+            ticks={ticks()}
+            tickFormatter={formatYAxisLabel}
+            fontSize={12}
+          />
+          <Tooltip/>
+          <Line 
+            type="monotone" 
+            dataKey="PM-2.5" 
+            stroke="url(#gradient)" 
+            dot={false} 
+            strokeWidth={3} 
+            activeDot={{fill: "transparent"}}
+          />
+        </LineChart>
+      )
+    }
 }
