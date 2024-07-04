@@ -7,7 +7,7 @@ export function negativeModulo(numerator: number, denominator: number): number {
   }
 
 export function getColor(value: number): string {
-  if (value <=  0) return '#FFFFFF';
+  if (value <=  0) return '#98fc59';
   if (value <=  0.25) return '#F9FFF7';
   if (value <=  0.5) return '#F3FFEE';
   if (value <=  0.75) return '#EDFFE6';

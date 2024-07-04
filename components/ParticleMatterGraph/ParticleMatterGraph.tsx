@@ -81,7 +81,7 @@ export const ParticleMatterGraph = ({ latLng, currentPM25, currentTime }: GraphP
                 <stop
                   key={index}
                   offset={`${(index / (graphData.data.length - 1)) * 100}%`}
-                  stopColor={entry ? getColor(entry["PM-2.5"]) : ""}
+                  stopColor={entry ? getColor(entry["PM-2.5"]) : "#98fc59"}
                 />
               ))}
             </linearGradient>
