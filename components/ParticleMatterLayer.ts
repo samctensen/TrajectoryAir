@@ -1,7 +1,8 @@
+import mapboxgl from 'mapbox-gl';
 import type { CircleLayer } from 'react-map-gl';
 
 
-export const ParticleMatterLayer = (layerID: string, opacity: number | mapboxgl.Expression): CircleLayer => {
+export const ParticleMatterLayer = (layerID: string, radius: number | mapboxgl.Expression, opacity: number | mapboxgl.Expression, blur: number | mapboxgl.Expression): CircleLayer => {
   return {
     'id': layerID,
     'type': 'circle',
@@ -1013,41 +1014,12 @@ export const ParticleMatterLayer = (layerID: string, opacity: number | mapboxgl.
         '#7e0023'
       ],
       'circle-stroke-color': '#ffffff',
-      'circle-radius': [
-        'interpolate',
-        [
-          'linear'
-        ],
-        [
-          'zoom'
-        ],
-        2, 2,
-        3, 3,
-        4, 8,
-        6, 15,
-        7, 20,
-        8, 25,
-        9, 50,
-        10, 130,
-      ],
+      'circle-radius': radius,
       'circle-opacity': opacity,
-      'circle-blur': [
-        'interpolate',
-        [
-          'linear'
-        ],
-        [
-          'zoom'
-        ],
-        2, 0,
-        4, 0,
-        6, 0.2,
-        7, 0.6,
-        8, 0.7,
-        9, 0.8,
-        10, 0.9,
-      ],
-      "circle-opacity-transition": {duration: 500}
+      'circle-blur': blur,
+      "circle-radius-transition": {duration: 500},
+      "circle-opacity-transition": {duration: 500},
+      "circle-blur-transition": {duration: 500}
     },
   }
 };

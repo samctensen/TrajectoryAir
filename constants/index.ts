@@ -31,3 +31,40 @@ export const LAYER_OPACITY: mapboxgl.Expression =
     6, 0.04,
     10, 0.1,
 ]
+
+export const LAYER_RADIUS: mapboxgl.Expression = 
+[
+    'interpolate',
+    [
+      'linear'
+    ],
+    [
+      'zoom'
+    ],
+    2, 2,
+    3, 3,
+    4, 8,
+    6, 15,
+    7, 20,
+    8, 25,
+    9, 50,
+    10, 130,
+]
+
+export const LAYER_BLUR: mapboxgl.Expression = 
+[
+    'interpolate',
+    [
+      'linear'
+    ],
+    [
+      'zoom'
+    ],
+    2, 0,
+    4, 0,
+    6, 0.2,
+    7, 0.6,
+    8, 0.7,
+    9, 0.8,
+    10, 0.9,
+]

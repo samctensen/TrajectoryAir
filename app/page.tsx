@@ -1,7 +1,7 @@
 'use client';
 import { CornerHUD, DateSlider, LocationInfo, Logo, MapLegend, MediaControls, ParticleMatterLayer, TimeSlider } from '@/components';
 import useUserLocation from '@/components/useUserLocation';
-import { LAYER_OPACITY, MAP_BOUNDARY, TILESET_IDS, U_OF_U_DEFAULT_COORDS } from '@/constants';
+import { LAYER_BLUR, LAYER_OPACITY, LAYER_RADIUS, MAP_BOUNDARY, TILESET_IDS, U_OF_U_DEFAULT_COORDS } from '@/constants';
 import { negativeModulo } from '@/functions';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
@@ -37,13 +37,6 @@ export default function Home() {
   const sliderDays = getNextDays(5);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowLogo(false);
-    }, 2500);
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
     if (dayPlaying) {
       interval = setInterval(() => {
@@ -60,8 +53,10 @@ export default function Home() {
   }, [dayPlaying, onSkipClicked]);
 
   function initialMapAnimation() {
+    setShowLogo(false);
     if (mapRef.current) {
-      mapRef.current?.flyTo({
+      mapRef.current.getMap().setPaintProperty(`ParticleMatterLayer2`, 'circle-opacity', LAYER_OPACITY);
+      mapRef.current.flyTo({
         center: [(userLocation?.longitude || U_OF_U_DEFAULT_COORDS.lon), (userLocation?.latitude || U_OF_U_DEFAULT_COORDS.lat)],
         zoom: 8,
         bearing: 0,
@@ -172,14 +167,22 @@ export default function Home() {
       const nextLayer = (newTime + userTimezone + 2) % TILESET_IDS.length;
       setTilesetIDs(tilesetIDs.with((activeLayer + 3) % 5, TILESET_IDS[nextLayer]));
       mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-opacity', 0);
+      mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-radius', 0);
+      mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-blur', 0);
+      mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${(activeLayer + 1) % 5}`, 'circle-radius', LAYER_RADIUS);
+      mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${(activeLayer + 1) % 5}`, 'circle-blur', LAYER_BLUR);
       mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${(activeLayer + 1) % 5}`, 'circle-opacity', LAYER_OPACITY);
       setActiveLayer([`ParticleMatterLayer${(activeLayer + 1) % 5}`])
     }
     else {
       const nextLayer = negativeModulo(newTime + userTimezone - 2,TILESET_IDS.length);
       setTilesetIDs(tilesetIDs.with(negativeModulo(activeLayer - 3, 5), TILESET_IDS[nextLayer]));
+      mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-radius', 0);
       mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-opacity', 0);
+      mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-blur', 0);
+      mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${negativeModulo(activeLayer - 1, 5)}`, 'circle-radius', LAYER_RADIUS);
       mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${negativeModulo(activeLayer - 1, 5)}`, 'circle-opacity', LAYER_OPACITY);
+      mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${negativeModulo(activeLayer - 1, 5)}`, 'circle-blur', LAYER_BLUR);
       setActiveLayer([`ParticleMatterLayer${negativeModulo(activeLayer - 1, 5)}`])
     }
     setSliderTime(newTime);
@@ -222,19 +225,19 @@ export default function Home() {
           keyboard={mapControlsEnabled}
         >
           <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[0]}`}>
-            <Layer {...ParticleMatterLayer("ParticleMatterLayer0", 0)}/>
+            <Layer {...ParticleMatterLayer("ParticleMatterLayer0", 0, 0, 0)}/>
           </Source>
           <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[1]}`}>
-            <Layer {...ParticleMatterLayer("ParticleMatterLayer1", 0)}/>
+            <Layer {...ParticleMatterLayer("ParticleMatterLayer1", 0, 0, 0)}/>
           </Source>
           <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[2]}`}>
-            <Layer {...ParticleMatterLayer("ParticleMatterLayer2", LAYER_OPACITY)}/>
+            <Layer {...ParticleMatterLayer("ParticleMatterLayer2", LAYER_RADIUS, 0, LAYER_BLUR)}/>
           </Source>
           <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[3]}`}>
-            <Layer {...ParticleMatterLayer("ParticleMatterLayer3", 0)}/>
+            <Layer {...ParticleMatterLayer("ParticleMatterLayer3", 0, 0, 0)}/>
           </Source>
           <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[4]}`}>
-            <Layer {...ParticleMatterLayer("ParticleMatterLayer4", 0)}/>
+            <Layer {...ParticleMatterLayer("ParticleMatterLayer4", 0, 0, 0)}/>
           </Source>
         </MapGL>
     </main>
