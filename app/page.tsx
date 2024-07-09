@@ -27,6 +27,7 @@ export default function Home() {
   const [activeLayer, setActiveLayer] = useState(["ParticleMatterLayer2"]);
   const [tilesetIDs, setTilesetIDs] = useState([TILESET_IDS[negativeModulo(sliderTime - 2, 24) + userTimezone], TILESET_IDS[negativeModulo(sliderTime - 1, 24) + userTimezone], TILESET_IDS[sliderTime % 24 + userTimezone], TILESET_IDS[(sliderTime + 1) % 24 + userTimezone], TILESET_IDS[(sliderTime + 2) % 24 + userTimezone]]);
   const [maxBounds, setMaxBounds] = useState<LngLatBoundsLike | null>(null);
+  const [logoFadeOut, setLogoFadeOut] = useState(false);
   const [showLogo, setShowLogo] = useState(true);
   const [showLegend, setShowLegend] = useState(true);
   const [showControlCenter, setShowControlCenter] = useState(false);
@@ -54,7 +55,7 @@ export default function Home() {
   }, [dayPlaying, onSkipClicked]);
 
   function initialMapAnimation() {
-    setShowLogo(false);
+    setLogoFadeOut(true);
     if (mapRef.current) {
       mapRef.current.getMap().setPaintProperty(`ParticleMatterLayer2`, 'circle-opacity', LAYER_OPACITY);
       mapRef.current.flyTo({
@@ -66,6 +67,7 @@ export default function Home() {
       });
       setMaxBounds(MAP_BOUNDARY);
       setTimeout(() => {
+        setShowLogo(false);
         setAnimationDone(true);
         setMapControls(true);
         setShowCornerHUD(true);
@@ -192,7 +194,7 @@ export default function Home() {
 
   return (
     <main>
-        {showLogo && <Logo />}
+        {showLogo && <Logo fadeOut={logoFadeOut} />}
         {animationDone && <CornerHUD time={sliderTime} sliderDate={sliderDate} showHUD={showCornerHUD}/>}
         {animationDone && <MapLegend showLegend={showLegend} onClick={onLegendButtonClick}/>}
         {animationDone && <ControlCenter 
