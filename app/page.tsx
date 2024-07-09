@@ -1,5 +1,5 @@
 'use client';
-import { CornerHUD, DateSlider, LocationInfo, Logo, MapLegend, MediaControls, ParticleMatterLayer, TimeSlider } from '@/components';
+import { ControlCenter, CornerHUD, LocationInfo, Logo, MapLegend, ParticleMatterLayer } from '@/components';
 import useUserLocation from '@/components/useUserLocation';
 import { LAYER_BLUR, LAYER_OPACITY, LAYER_RADIUS, MAP_BOUNDARY, TILESET_IDS, U_OF_U_DEFAULT_COORDS } from '@/constants';
 import { negativeModulo } from '@/functions';
@@ -29,6 +29,7 @@ export default function Home() {
   const [maxBounds, setMaxBounds] = useState<LngLatBoundsLike | null>(null);
   const [showLogo, setShowLogo] = useState(true);
   const [showLegend, setShowLegend] = useState(true);
+  const [showControlCenter, setShowControlCenter] = useState(false);
   const [showCornerHUD, setShowCornerHUD] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const [clickedLatLng, setClickedLatLng] = useState<[number, number] | null>(null);
@@ -68,6 +69,7 @@ export default function Home() {
         setAnimationDone(true);
         setMapControls(true);
         setShowCornerHUD(true);
+        setShowControlCenter(true);
         setDayPlaying(true);
       }, 3500);
     }
@@ -193,12 +195,19 @@ export default function Home() {
         {showLogo && <Logo />}
         {animationDone && <CornerHUD time={sliderTime} sliderDate={sliderDate} showHUD={showCornerHUD}/>}
         {animationDone && <MapLegend showLegend={showLegend} onClick={onLegendButtonClick}/>}
+        {animationDone && <ControlCenter 
+          showControls={showControlCenter}
+          sliderTime={sliderTime}
+          onTimeChange={onTimeChange}
+          playing={dayPlaying}
+          onPlayPauseClicked={onPlayPauseClick}
+          onSkipClicked={onSkipClicked}
+          sliderDays={sliderDays}
+          onDateChange={onDateChange}
+        />}
         {showInfo && (
           <LocationInfo close={onCloseInfoClick} latLng={clickedLatLng} currentPM25={clickedPM25} currentTime={sliderTime} />
         )}
-        <DateSlider sliderDays={sliderDays} onDateChange={onDateChange} />
-        <MediaControls playing={dayPlaying} onPlayPauseClicked={onPlayPauseClick} onSkipClicked={onSkipClicked}/>
-        <TimeSlider sliderValue={sliderTime} onTimeChange={onTimeChange} />
         <MapGL
           ref={mapRef}
           mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}

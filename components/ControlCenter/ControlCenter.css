@@ -1,0 +1,11 @@
+.control-center-fade-in {
+    animation: fade-in 1s forwards;
+}
+
+.control-center-container {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+}
