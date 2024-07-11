@@ -74,6 +74,7 @@ export default function Home() {
         setMapControls(true);
         setShowCornerHUD(true);
         setShowControlCenter(true);
+        setDayPlaying(true);
       }, 3500);
     }
   }
