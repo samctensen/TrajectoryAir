@@ -34,12 +34,15 @@ export default function Home() {
   const [showInfo, setShowInfo] = useState(false);
   const [clickedLatLng, setClickedLatLng] = useState<[number, number] | null>(null);
   const [clickedPM25, setClickedPM25] = useState<number>(0);
-  const firstDate = new Date();
-  let currentDaysTilesetIDs = getDaysTilesets(sliderDate);
-  console.log(currentDaysTilesetIDs)
+  const [currentDaysTilesetIDs, setCurrentDaysTileSets] = useState(getDaysTilesets(sliderDate));
   const sliderDays = getNextDays(5);
-  const [tilesetIDs, setTilesetIDs] = useState([currentDaysTilesetIDs[negativeModulo(sliderTime - 2, 24)], currentDaysTilesetIDs[negativeModulo(sliderTime - 1, 24)], currentDaysTilesetIDs[sliderTime % 24], currentDaysTilesetIDs[(sliderTime + 1) % 24], currentDaysTilesetIDs[(sliderTime + 2) % 24]]);
-  
+  const [tilesetIDs, setTilesetIDs] = useState([
+    currentDaysTilesetIDs[negativeModulo(sliderTime - 2, 24)],
+    currentDaysTilesetIDs[negativeModulo(sliderTime - 1, 24)],
+    currentDaysTilesetIDs[sliderTime % 24],
+    currentDaysTilesetIDs[(sliderTime + 1) % 24],
+    currentDaysTilesetIDs[(sliderTime + 2) % 24]
+  ]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -91,13 +94,14 @@ export default function Home() {
   }
 
   function getDaysTilesets(date: Date): string[]{
-    // Subtract one day by modifying the day of the month
+    let newDate = new Date(date.getTime());
+    let nextDay = new Date(newDate.getDate() + 1);
     const ids = [];
     for (let index = 0; index < 24; index++) {
-      if (index + userTimezone > 23 && date.getDate() == new Date().getDate()) {
-        date = new Date(date.setDate(date.getDate() + 1));
+      if (index + userTimezone > 23 && newDate.getTime() !== nextDay.getTime()) {
+        newDate.setDate(nextDay.getTime());
       }
-      let dateString = date.toISOString().split('T')[0] + '_';
+      let dateString = newDate.toISOString().split('T')[0] + '_';
       dateString = dateString + ((index + userTimezone) % 24).toString().padStart(2, '0');
       ids.push(dateString);
     }
@@ -105,24 +109,26 @@ export default function Home() {
   }
 
   function onDateChange(current: number, next: number) {
-    const newSliderDate = new Date(sliderDate);
+    let index = 0
     if (next > current) {
-      newSliderDate.setDate(sliderDate.getDate() + 1);
-    } else if (next == 0) {
-      newSliderDate.setDate(firstDate.getDate());
-    } else {
-      newSliderDate.setDate(sliderDate.getDate() - 1);
+      index = current + 1
+    } else if (next < current && next != 0) {
+      index = current - 1;
     }
-    setSliderDate(newSliderDate);
-    currentDaysTilesetIDs = getDaysTilesets(newSliderDate);
-    setTilesetIDs([currentDaysTilesetIDs[negativeModulo(sliderTime - 2, 24)], currentDaysTilesetIDs[negativeModulo(sliderTime - 1, 24)], currentDaysTilesetIDs[sliderTime % 24], currentDaysTilesetIDs[(sliderTime + 1) % 24], currentDaysTilesetIDs[(sliderTime + 2) % 24]])
+    setSliderDate(sliderDays[index])
+    const newDatesTileSets = getDaysTilesets(sliderDays[index]);
+    setCurrentDaysTileSets(newDatesTileSets);
+    setTilesetIDs([
+      newDatesTileSets[negativeModulo(sliderTime - 2, 24)],
+      newDatesTileSets[negativeModulo(sliderTime - 1, 24)],
+      newDatesTileSets[sliderTime % 24],
+      newDatesTileSets[(sliderTime + 1) % 24],
+      newDatesTileSets[(sliderTime + 2) % 24]
+    ])
   }
 
   function onTimeChange(event: Event, value: number) {
     setSliderTime(value);
-    if (value + userTimezone > 23) {
-      setSliderDate(new Date(sliderDate.getDate() + 1));
-    }
   }
 
   function onMapClick(event: MapLayerMouseEvent) {
@@ -183,7 +189,7 @@ export default function Home() {
     const newTime = negativeModulo(sliderTime + increment, 24);
     const activeLayer = getActiveLayer();
     if (increment > 0) {
-      const nextLayer = (newTime + userTimezone + 2) % currentDaysTilesetIDs.length;
+      const nextLayer = (newTime + 2) % currentDaysTilesetIDs.length;
       setTilesetIDs(tilesetIDs.with((activeLayer + 3) % 5, currentDaysTilesetIDs[nextLayer]));
       mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-opacity', 0);
       mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-radius', 0);
@@ -204,6 +210,7 @@ export default function Home() {
       mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${negativeModulo(activeLayer - 1, 5)}`, 'circle-blur', LAYER_BLUR);
       setActiveLayer([`ParticleMatterLayer${negativeModulo(activeLayer - 1, 5)}`])
     }
+    console.log(tilesetIDs[getActiveLayer()])
     setSliderTime(newTime);
   }
 
