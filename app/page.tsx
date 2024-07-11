@@ -200,7 +200,7 @@ export default function Home() {
       setActiveLayer([`ParticleMatterLayer${(activeLayer + 1) % 5}`])
     }
     else {
-      const nextLayer = negativeModulo(newTime + userTimezone - 2,currentDaysTilesetIDs.length);
+      const nextLayer = negativeModulo(newTime + userTimezone - 2, currentDaysTilesetIDs.length);
       setTilesetIDs(tilesetIDs.with(negativeModulo(activeLayer - 3, 5), currentDaysTilesetIDs[nextLayer]));
       mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-radius', 0);
       mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-opacity', 0);
@@ -210,7 +210,6 @@ export default function Home() {
       mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${negativeModulo(activeLayer - 1, 5)}`, 'circle-blur', LAYER_BLUR);
       setActiveLayer([`ParticleMatterLayer${negativeModulo(activeLayer - 1, 5)}`])
     }
-    console.log(tilesetIDs[getActiveLayer()])
     setSliderTime(newTime);
   }
 
