@@ -1,8 +1,8 @@
 import { faX } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
-import { ParticleMatterGraph } from '../ParticleMatterGraph/ParticleMatterGraph';
 import './LocationInfo.css';
+import { ParticleMatterGraph } from './ParticleMatterGraph/ParticleMatterGraph';
 
 interface LocationProps {
     close: () => void,

@@ -36,6 +36,7 @@ export default function Home() {
   const [clickedPM25, setClickedPM25] = useState<number>(0);
   const firstDate = new Date();
   let currentDaysTilesetIDs = getDaysTilesets(sliderDate);
+  console.log(currentDaysTilesetIDs)
   const sliderDays = getNextDays(5);
   const [tilesetIDs, setTilesetIDs] = useState([currentDaysTilesetIDs[negativeModulo(sliderTime - 2, 24)], currentDaysTilesetIDs[negativeModulo(sliderTime - 1, 24)], currentDaysTilesetIDs[sliderTime % 24], currentDaysTilesetIDs[(sliderTime + 1) % 24], currentDaysTilesetIDs[(sliderTime + 2) % 24]]);
   
@@ -90,15 +91,13 @@ export default function Home() {
   }
 
   function getDaysTilesets(date: Date): string[]{
-    const updatedDate = new Date(date);
     // Subtract one day by modifying the day of the month
-    updatedDate.setDate(date.getDate() - 1);
     const ids = [];
     for (let index = 0; index < 24; index++) {
-      if (index + userTimezone > 23) {
-        updatedDate.setDate(date.getDate());
+      if (index + userTimezone > 23 && date.getDate() == new Date().getDate()) {
+        date = new Date(date.setDate(date.getDate() + 1));
       }
-      let dateString = updatedDate.toISOString().split('T')[0] + '_';
+      let dateString = date.toISOString().split('T')[0] + '_';
       dateString = dateString + ((index + userTimezone) % 24).toString().padStart(2, '0');
       ids.push(dateString);
     }
