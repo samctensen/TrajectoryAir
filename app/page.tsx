@@ -1,7 +1,7 @@
 'use client';
 import { ControlCenter, CornerHUD, LocationInfo, Logo, MapLegend, ParticleMatterLayer } from '@/components';
 import useUserLocation from '@/components/useUserLocation';
-import { LAYER_BLUR, LAYER_OPACITY, LAYER_RADIUS, MAP_BOUNDARY, TILESET_IDS, U_OF_U_DEFAULT_COORDS } from '@/constants';
+import { LAYER_BLUR, LAYER_OPACITY, LAYER_RADIUS, MAP_BOUNDARY, U_OF_U_DEFAULT_COORDS } from '@/constants';
 import { negativeModulo } from '@/functions';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
@@ -25,7 +25,6 @@ export default function Home() {
   const [sliderDate, setSliderDate] = useState(new Date());
   const [sliderTime, setSliderTime] = useState(userTime.getMinutes() < 30 ? userTime.getHours() : userTime.getHours() + 1);
   const [activeLayer, setActiveLayer] = useState(["ParticleMatterLayer2"]);
-  const [tilesetIDs, setTilesetIDs] = useState([TILESET_IDS[negativeModulo(sliderTime - 2, 24) + userTimezone], TILESET_IDS[negativeModulo(sliderTime - 1, 24) + userTimezone], TILESET_IDS[sliderTime % 24 + userTimezone], TILESET_IDS[(sliderTime + 1) % 24 + userTimezone], TILESET_IDS[(sliderTime + 2) % 24 + userTimezone]]);
   const [maxBounds, setMaxBounds] = useState<LngLatBoundsLike | null>(null);
   const [logoFadeOut, setLogoFadeOut] = useState(false);
   const [showLogo, setShowLogo] = useState(true);
@@ -36,7 +35,10 @@ export default function Home() {
   const [clickedLatLng, setClickedLatLng] = useState<[number, number] | null>(null);
   const [clickedPM25, setClickedPM25] = useState<number>(0);
   const firstDate = new Date();
+  let currentDaysTilesetIDs = getDaysTilesets(sliderDate);
   const sliderDays = getNextDays(5);
+  const [tilesetIDs, setTilesetIDs] = useState([currentDaysTilesetIDs[negativeModulo(sliderTime - 2, 24)], currentDaysTilesetIDs[negativeModulo(sliderTime - 1, 24)], currentDaysTilesetIDs[sliderTime % 24], currentDaysTilesetIDs[(sliderTime + 1) % 24], currentDaysTilesetIDs[(sliderTime + 2) % 24]]);
+  
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -72,24 +74,34 @@ export default function Home() {
         setMapControls(true);
         setShowCornerHUD(true);
         setShowControlCenter(true);
-        setDayPlaying(true);
       }, 3500);
     }
   }
 
   function getNextDays(days: number) {
     const dates = [];
-    for (let i = (days / 2) - 1; i > 0; i--) {
-      const date = new Date();
-      date.setDate(date.getDate() - i);
-      dates.push(date);
-    }
-    for (let i = 0; i < days / 2; i++) {
+    for (let i = 0; i < days; i++) {
       const date = new Date();
       date.setDate(date.getDate() + i);
       dates.push(date);
     }
     return dates;
+  }
+
+  function getDaysTilesets(date: Date): string[]{
+    const updatedDate = new Date(date);
+    // Subtract one day by modifying the day of the month
+    updatedDate.setDate(date.getDate() - 1);
+    const ids = [];
+    for (let index = 0; index < 24; index++) {
+      if (index + userTimezone > 23) {
+        updatedDate.setDate(date.getDate());
+      }
+      let dateString = updatedDate.toISOString().split('T')[0] + '_';
+      dateString = dateString + ((index + userTimezone) % 24).toString().padStart(2, '0');
+      ids.push(dateString);
+    }
+    return ids;
   }
 
   function onDateChange(current: number, next: number) {
@@ -102,6 +114,8 @@ export default function Home() {
       newSliderDate.setDate(sliderDate.getDate() - 1);
     }
     setSliderDate(newSliderDate);
+    currentDaysTilesetIDs = getDaysTilesets(newSliderDate);
+    setTilesetIDs([currentDaysTilesetIDs[negativeModulo(sliderTime - 2, 24)], currentDaysTilesetIDs[negativeModulo(sliderTime - 1, 24)], currentDaysTilesetIDs[sliderTime % 24], currentDaysTilesetIDs[(sliderTime + 1) % 24], currentDaysTilesetIDs[(sliderTime + 2) % 24]])
   }
 
   function onTimeChange(event: Event, value: number) {
@@ -164,12 +178,13 @@ export default function Home() {
     }
   }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   function onSkipClicked(increment: number) {
     const newTime = negativeModulo(sliderTime + increment, 24);
     const activeLayer = getActiveLayer();
     if (increment > 0) {
-      const nextLayer = (newTime + userTimezone + 2) % TILESET_IDS.length;
-      setTilesetIDs(tilesetIDs.with((activeLayer + 3) % 5, TILESET_IDS[nextLayer]));
+      const nextLayer = (newTime + userTimezone + 2) % currentDaysTilesetIDs.length;
+      setTilesetIDs(tilesetIDs.with((activeLayer + 3) % 5, currentDaysTilesetIDs[nextLayer]));
       mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-opacity', 0);
       mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-radius', 0);
       mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-blur', 0);
@@ -179,8 +194,8 @@ export default function Home() {
       setActiveLayer([`ParticleMatterLayer${(activeLayer + 1) % 5}`])
     }
     else {
-      const nextLayer = negativeModulo(newTime + userTimezone - 2,TILESET_IDS.length);
-      setTilesetIDs(tilesetIDs.with(negativeModulo(activeLayer - 3, 5), TILESET_IDS[nextLayer]));
+      const nextLayer = negativeModulo(newTime + userTimezone - 2,currentDaysTilesetIDs.length);
+      setTilesetIDs(tilesetIDs.with(negativeModulo(activeLayer - 3, 5), currentDaysTilesetIDs[nextLayer]));
       mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-radius', 0);
       mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-opacity', 0);
       mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-blur', 0);
@@ -208,7 +223,7 @@ export default function Home() {
           onDateChange={onDateChange}
         />}
         {showInfo && (
-          <LocationInfo close={onCloseInfoClick} latLng={clickedLatLng} currentPM25={clickedPM25} currentTime={sliderTime} />
+          <LocationInfo close={onCloseInfoClick} latLng={clickedLatLng} currentPM25={clickedPM25} tilesetIDs={currentDaysTilesetIDs} />
         )}
         <MapGL
           ref={mapRef}

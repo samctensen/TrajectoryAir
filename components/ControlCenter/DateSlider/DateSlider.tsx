@@ -23,13 +23,13 @@ export const DateSlider = ({ sliderDays, onDateChange }: DateSliderProps) => {
         slidesToScroll={1}
         speed={300}
         dots={true}
-        initialSlide={2}
+        initialSlide={0}
         arrows={false}
       >
         {sliderDays.map((date, index) => (
           <div className='slide-content' key={index}>
             <h3 className='slide-text'>
-              {index === 2 ? 'Today' : date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+              {index === 0 ? 'Today' : date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
             </h3>
           </div>
         ))}

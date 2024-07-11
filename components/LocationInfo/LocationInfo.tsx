@@ -8,10 +8,10 @@ interface LocationProps {
     close: () => void,
     latLng: [number, number] | null,
     currentPM25: number,
-    currentTime: number,
+    tilesetIDs: string[]
 }
 
-export function LocationInfo({ close, latLng, currentPM25, currentTime}: LocationProps) {
+export function LocationInfo({ close, latLng, currentPM25, tilesetIDs}: LocationProps) {
     const [locationData, setLocationData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -82,7 +82,7 @@ export function LocationInfo({ close, latLng, currentPM25, currentTime}: Locatio
                         <h3 className='text-2s font-bold text-white'>Air Quality: {getAirQuality(currentPM25)}</h3>
                     </div>
                     <div className='mt-4 ml-3'>
-                        <ParticleMatterGraph latLng={latLng!} currentPM25={currentPM25} currentTime={currentTime} />
+                        <ParticleMatterGraph latLng={latLng!} tilesetIDs={tilesetIDs}  />
                     </div>
             </div>
         );

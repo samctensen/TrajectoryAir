@@ -1,4 +1,3 @@
-import { TILESET_IDS } from "@/constants";
 import { getColor } from "@/functions";
 import { useQueries } from "@tanstack/react-query";
 import { BarLoader } from "react-spinners";
@@ -6,14 +5,13 @@ import { Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
 
 interface GraphProps {
     latLng: [number, number],
-    currentPM25: number,
-    currentTime: number
+    tilesetIDs: string[]
 }
 
-export const ParticleMatterGraph = ({ latLng, currentPM25, currentTime }: GraphProps)  => {
+export const ParticleMatterGraph = ({ latLng, tilesetIDs}: GraphProps)  => {
 
     const graphData = useQueries({
-      queries: TILESET_IDS.map((id, index) => {
+      queries: tilesetIDs.map((id, index) => {
         return {
           queryKey: [`${latLng?.[0]},${latLng?.[1]},${index}`],
           queryFn: async () => {
