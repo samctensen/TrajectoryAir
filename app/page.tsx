@@ -106,13 +106,6 @@ export default function Home() {
       setDayPlaying(false);
       setShowCornerHUD(false);
       setClickedLatLng([event.lngLat.lat, event.lngLat.lng]);
-      mapRef.current?.flyTo({
-        center: event.lngLat,
-        zoom: 8,
-        bearing: 0,
-        pitch: 0,
-        duration: 1500
-      });
       const feature = event.features && event.features[0];
       if (feature && feature.properties) {
         const pm25 = feature.properties.PM25;
