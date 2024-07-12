@@ -1,3 +1,4 @@
+import { getDaysTilesets } from '@/functions';
 import type { LngLatBoundsLike } from 'react-map-gl';
 
 export const U_OF_U_DEFAULT_COORDS = {
@@ -64,3 +65,14 @@ export const LAYER_BLUR: mapboxgl.Expression =
     9, 0.8,
     10, 0.9,
 ]
+
+export const TILESET_IDS = (timezone: number) => {
+  const listOfTilesets: string[][] = [];
+  for (let index = 0; index < 5; index++) {
+    let currentDay = new Date();
+    currentDay.setDate(currentDay.getDate() + index);
+    const currentTilesets = getDaysTilesets(currentDay, timezone);
+    listOfTilesets.push(currentTilesets);
+  }
+  return listOfTilesets;
+}

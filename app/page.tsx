@@ -1,7 +1,7 @@
 'use client';
 import { ControlCenter, CornerHUD, LocationInfo, Logo, MapLegend, ParticleMatterLayer } from '@/components';
 import useUserLocation from '@/components/useUserLocation';
-import { LAYER_BLUR, LAYER_OPACITY, LAYER_RADIUS, MAP_BOUNDARY, U_OF_U_DEFAULT_COORDS } from '@/constants';
+import { LAYER_BLUR, LAYER_OPACITY, LAYER_RADIUS, MAP_BOUNDARY, TILESET_IDS, U_OF_U_DEFAULT_COORDS } from '@/constants';
 import { negativeModulo } from '@/functions';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
@@ -22,7 +22,7 @@ export default function Home() {
   const [animationDone, setAnimationDone] = useState(false);
   const [mapControlsEnabled, setMapControls] = useState(false);
   const [dayPlaying, setDayPlaying] = useState(false);
-  const [sliderDate, setSliderDate] = useState(new Date());
+  const [sliderDateIndex, setSliderDateIndex] = useState(0);
   const [sliderTime, setSliderTime] = useState(userTime.getMinutes() < 30 ? userTime.getHours() : userTime.getHours() + 1);
   const [activeLayer, setActiveLayer] = useState(["ParticleMatterLayer2"]);
   const [maxBounds, setMaxBounds] = useState<LngLatBoundsLike | null>(null);
@@ -34,14 +34,14 @@ export default function Home() {
   const [showInfo, setShowInfo] = useState(false);
   const [clickedLatLng, setClickedLatLng] = useState<[number, number] | null>(null);
   const [clickedPM25, setClickedPM25] = useState<number>(0);
-  const [currentDaysTilesetIDs, setCurrentDaysTileSets] = useState(getDaysTilesets(sliderDate));
   const sliderDays = getNextDays(5);
+  const allTilesetIDs: string[][] = TILESET_IDS(userTimezone);
   const [tilesetIDs, setTilesetIDs] = useState([
-    currentDaysTilesetIDs[negativeModulo(sliderTime - 2, 24)],
-    currentDaysTilesetIDs[negativeModulo(sliderTime - 1, 24)],
-    currentDaysTilesetIDs[sliderTime % 24],
-    currentDaysTilesetIDs[(sliderTime + 1) % 24],
-    currentDaysTilesetIDs[(sliderTime + 2) % 24]
+    allTilesetIDs[sliderDateIndex][negativeModulo(sliderTime - 2, 24)],
+    allTilesetIDs[sliderDateIndex][negativeModulo(sliderTime - 1, 24)],
+    allTilesetIDs[sliderDateIndex][sliderTime % 24],
+    allTilesetIDs[sliderDateIndex][(sliderTime + 1) % 24],
+    allTilesetIDs[sliderDateIndex][(sliderTime + 2) % 24]
   ]);
 
   useEffect(() => {
@@ -93,21 +93,6 @@ export default function Home() {
     return dates;
   }
 
-  function getDaysTilesets(date: Date): string[]{
-    let newDate = new Date(date.getTime());
-    let nextDay = new Date(newDate.getDate() + 1);
-    const ids = [];
-    for (let index = 0; index < 24; index++) {
-      if (index + userTimezone > 23 && newDate.getTime() !== nextDay.getTime()) {
-        newDate.setDate(nextDay.getTime());
-      }
-      let dateString = newDate.toISOString().split('T')[0] + '_';
-      dateString = dateString + ((index + userTimezone) % 24).toString().padStart(2, '0');
-      ids.push(dateString);
-    }
-    return ids;
-  }
-
   function onDateChange(current: number, next: number) {
     let index = 0
     if (next > current) {
@@ -115,15 +100,13 @@ export default function Home() {
     } else if (next < current && next != 0) {
       index = current - 1;
     }
-    setSliderDate(sliderDays[index])
-    const newDatesTileSets = getDaysTilesets(sliderDays[index]);
-    setCurrentDaysTileSets(newDatesTileSets);
+    setSliderDateIndex(index);
     setTilesetIDs([
-      newDatesTileSets[negativeModulo(sliderTime - 2, 24)],
-      newDatesTileSets[negativeModulo(sliderTime - 1, 24)],
-      newDatesTileSets[sliderTime % 24],
-      newDatesTileSets[(sliderTime + 1) % 24],
-      newDatesTileSets[(sliderTime + 2) % 24]
+      allTilesetIDs[index][negativeModulo(sliderTime - 2, 24)],
+      allTilesetIDs[index][negativeModulo(sliderTime - 1, 24)],
+      allTilesetIDs[index][sliderTime % 24],
+      allTilesetIDs[index][(sliderTime + 1) % 24],
+      allTilesetIDs[index][(sliderTime + 2) % 24]
     ])
   }
 
@@ -189,8 +172,8 @@ export default function Home() {
     const newTime = negativeModulo(sliderTime + increment, 24);
     const activeLayer = getActiveLayer();
     if (increment > 0) {
-      const nextLayer = (newTime + 2) % currentDaysTilesetIDs.length;
-      setTilesetIDs(tilesetIDs.with((activeLayer + 3) % 5, currentDaysTilesetIDs[nextLayer]));
+      const nextLayer = (newTime + 2) % 24;
+      setTilesetIDs(tilesetIDs.with((activeLayer + 3) % 5, allTilesetIDs[sliderDateIndex][nextLayer]));
       mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-opacity', 0);
       mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-radius', 0);
       mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-blur', 0);
@@ -200,8 +183,8 @@ export default function Home() {
       setActiveLayer([`ParticleMatterLayer${(activeLayer + 1) % 5}`])
     }
     else {
-      const nextLayer = negativeModulo(newTime + userTimezone - 2, currentDaysTilesetIDs.length);
-      setTilesetIDs(tilesetIDs.with(negativeModulo(activeLayer - 3, 5), currentDaysTilesetIDs[nextLayer]));
+      const nextLayer = negativeModulo(newTime - 2, 24);
+      setTilesetIDs(tilesetIDs.with(negativeModulo(activeLayer - 3, 5), allTilesetIDs[sliderDateIndex][nextLayer]));
       mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-radius', 0);
       mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-opacity', 0);
       mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-blur', 0);
@@ -216,7 +199,7 @@ export default function Home() {
   return (
     <main>
         {showLogo && <Logo fadeOut={logoFadeOut} />}
-        {animationDone && <CornerHUD time={sliderTime} sliderDate={sliderDate} showHUD={showCornerHUD}/>}
+        {animationDone && <CornerHUD time={sliderTime} sliderDateIndex={sliderDateIndex} showHUD={showCornerHUD}/>}
         {animationDone && <MapLegend showLegend={showLegend} onClick={onLegendButtonClick}/>}
         {animationDone && <ControlCenter 
           showControls={showControlCenter}
@@ -229,7 +212,7 @@ export default function Home() {
           onDateChange={onDateChange}
         />}
         {showInfo && (
-          <LocationInfo close={onCloseInfoClick} latLng={clickedLatLng} currentPM25={clickedPM25} tilesetIDs={currentDaysTilesetIDs} />
+          <LocationInfo close={onCloseInfoClick} latLng={clickedLatLng} currentPM25={clickedPM25} tilesetIDs={allTilesetIDs[sliderDateIndex]} />
         )}
         <MapGL
           ref={mapRef}
