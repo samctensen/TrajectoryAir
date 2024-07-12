@@ -8,7 +8,7 @@ interface LocationProps {
     close: () => void,
     latLng: [number, number] | null,
     currentPM25: number,
-    tilesetIDs: string[]
+    tilesetIDs: string[][]
 }
 
 export function LocationInfo({ close, latLng, currentPM25, tilesetIDs}: LocationProps) {

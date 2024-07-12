@@ -1,8 +1,8 @@
 'use client';
 import { ControlCenter, CornerHUD, LocationInfo, Logo, MapLegend, ParticleMatterLayer } from '@/components';
 import useUserLocation from '@/components/useUserLocation';
-import { LAYER_BLUR, LAYER_OPACITY, LAYER_RADIUS, MAP_BOUNDARY, TILESET_IDS, U_OF_U_DEFAULT_COORDS } from '@/constants';
-import { negativeModulo } from '@/functions';
+import { LAYER_BLUR, LAYER_OPACITY, LAYER_RADIUS, MAP_BOUNDARY, U_OF_U_DEFAULT_COORDS } from '@/constants';
+import { getAllTilesets, getNextDays, negativeModulo } from '@/functions';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -34,8 +34,8 @@ export default function Home() {
   const [showInfo, setShowInfo] = useState(false);
   const [clickedLatLng, setClickedLatLng] = useState<[number, number] | null>(null);
   const [clickedPM25, setClickedPM25] = useState<number>(0);
-  const sliderDays = getNextDays(5);
-  const allTilesetIDs: string[][] = TILESET_IDS(userTimezone);
+  const sliderDays = getNextDays();
+  const allTilesetIDs: string[][] = getAllTilesets(userTimezone);
   const [tilesetIDs, setTilesetIDs] = useState([
     allTilesetIDs[sliderDateIndex][negativeModulo(sliderTime - 2, 24)],
     allTilesetIDs[sliderDateIndex][negativeModulo(sliderTime - 1, 24)],
@@ -83,16 +83,6 @@ export default function Home() {
     }
   }
 
-  function getNextDays(days: number) {
-    const dates = [];
-    for (let i = 0; i < days; i++) {
-      const date = new Date();
-      date.setDate(date.getDate() + i);
-      dates.push(date);
-    }
-    return dates;
-  }
-
   function onDateChange(current: number, next: number) {
     let index = 0
     if (next > current) {
@@ -108,10 +98,6 @@ export default function Home() {
       allTilesetIDs[index][(sliderTime + 1) % 24],
       allTilesetIDs[index][(sliderTime + 2) % 24]
     ])
-  }
-
-  function onTimeChange(event: Event, value: number) {
-    setSliderTime(value);
   }
 
   function onMapClick(event: MapLayerMouseEvent) {
@@ -147,6 +133,10 @@ export default function Home() {
 
   function onLegendButtonClick() {
     setShowLegend(!showLegend);
+  }
+
+  function onTimeChange(event: Event, value: number) {
+    setSliderTime(value);
   }
 
   function getActiveLayer(): number {
@@ -212,7 +202,7 @@ export default function Home() {
           onDateChange={onDateChange}
         />}
         {showInfo && (
-          <LocationInfo close={onCloseInfoClick} latLng={clickedLatLng} currentPM25={clickedPM25} tilesetIDs={allTilesetIDs[sliderDateIndex]} />
+          <LocationInfo close={onCloseInfoClick} latLng={clickedLatLng} currentPM25={clickedPM25} tilesetIDs={allTilesetIDs} />
         )}
         <MapGL
           ref={mapRef}

@@ -6,6 +6,17 @@ export function negativeModulo(numerator: number, denominator: number): number {
     return result;
 }
 
+export function getAllTilesets(timezone: number): string[][] {
+  const listOfTilesets: string[][] = [];
+  for (let index = 0; index < 5; index++) {
+    let currentDay = new Date();
+    currentDay.setDate(currentDay.getDate() + index);
+    const currentTilesets = getDaysTilesets(currentDay, timezone);
+    listOfTilesets.push(currentTilesets);
+  }
+  return listOfTilesets;
+}
+
 export function getDaysTilesets(date: Date, timezone: number): string[]{
   let newDate = new Date(date.getTime());
   let nextDay = new Date(newDate.getDate() + 1);
@@ -19,6 +30,16 @@ export function getDaysTilesets(date: Date, timezone: number): string[]{
     ids.push(dateString);
   }
   return ids;
+}
+
+export function getNextDays() {
+  const dates = [];
+  for (let i = 0; i < 5; i++) {
+    const date = new Date();
+    date.setDate(date.getDate() + i);
+    dates.push(date);
+  }
+  return dates;
 }
 
 export function getColor(value: number): string {
