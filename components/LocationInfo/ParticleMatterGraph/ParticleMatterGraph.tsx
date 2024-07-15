@@ -1,37 +1,18 @@
 import { getColor, getNextDays } from "@/functions";
-import { useQueries } from "@tanstack/react-query";
-import { BarLoader } from "react-spinners";
 import { Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
 
 interface GraphProps {
-  latLng: [number, number],
-  tilesetIDs: string[][]
+  graphData: {
+    data: ({
+        name: number;
+        "PM-2.5": number;
+    } | undefined)[];
+    loading: boolean;
+    empty: boolean;
+  }
 }
 
-export const ParticleMatterGraph = ({ latLng, tilesetIDs}: GraphProps)  => {
-  const graphData = useQueries({
-    queries: tilesetIDs.flat().map((id, index) => {
-      return {
-        queryKey: [`${latLng?.[0]},${latLng?.[1]},${index}`],
-        queryFn: async () => {
-          const response = await fetch(
-            `https://api.mapbox.com/v4/${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${id}/tilequery/${latLng[1]},${latLng[0]}.json?radius=6000&limit=1&access_token=${process.env.NEXT_PUBLIC_MAPBOX_TOKEN}`
-          );            
-          const data =  await response.json();
-          return {
-            name: index,
-            "PM-2.5": data.features[0] ? parseFloat(data.features[0].properties.PM25.toFixed(1)) : 0
-          }
-        }
-      }
-    }),
-    combine: (results) => {
-      return {
-        data: results.map((result) => result.data),
-        pending: results.some((result) => result.isPending),
-      }
-    },
-  });
+export const ParticleMatterGraph = ({ graphData }: GraphProps)  => {
 
   const getMaxPM25Value = () => {
     if (!graphData || graphData.data.length === 0) return 0;
@@ -63,18 +44,7 @@ export const ParticleMatterGraph = ({ latLng, tilesetIDs}: GraphProps)  => {
     96: `${dates[4].getMonth() + 1}/${dates[4].getDate()}`,
   };
   const formattedXAxisLabel = (value: number) => xAxisLabelMap[value];
-
-  if (graphData.pending) {
-      return (
-          <BarLoader
-              color={"#FFFFFF"}
-              loading={graphData.pending}
-              aria-label="Loading Spinner"
-              data-testid="loader"
-          />
-      );
-  }
-  else {
+  if (!graphData.empty && !graphData.loading) {
     return (
       <LineChart
         width={280}

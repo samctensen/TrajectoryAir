@@ -42,6 +42,30 @@ export function getNextDays() {
   return dates;
 }
 
+export function getAirQuality(pm25: number) {
+  if (pm25 <= 0) {
+      return 'Healthy';
+  }
+  else if (0 < pm25 && pm25 <= 20) { // Green
+      return 'Good';
+  }
+  else if (20 < pm25 && pm25 <= 35) { // Yellow
+      return 'Moderate';
+  }
+  else if (35 < pm25 && pm25 <= 80) { // Orange
+      return 'Unhealthy for Sensitive Groups';
+  }
+  else if (80 < pm25 && pm25 <= 160) { // Red
+      return 'Unhealthy for Everyone';
+  }
+  else if (160 < pm25 && pm25 <= 220) { // Purple
+      return 'Very Unhealthy';
+  }
+  else if (220 < pm25) { // Maroon
+      return 'Hazardous';
+  }
+}
+
 export function getColor(value: number): string {
   if (value <=  0) return '#98fc59';
   if (value <=  0.25) return '#F9FFF7';

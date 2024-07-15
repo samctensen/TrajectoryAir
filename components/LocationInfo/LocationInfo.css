@@ -36,8 +36,11 @@
 }
 
 .location-line {
-    border-top: 2px solid white;
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
     width: 300px
+}
+
+.location-line-loaded {
+    border-top: 2px solid white;
 }

@@ -1,6 +1,8 @@
+import { getAirQuality } from '@/functions';
 import { faX } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState } from 'react';
+import { useQueries, useQuery } from '@tanstack/react-query';
+import { BarLoader } from 'react-spinners';
 import './LocationInfo.css';
 import { ParticleMatterGraph } from './ParticleMatterGraph/ParticleMatterGraph';
 
@@ -12,79 +14,77 @@ interface LocationProps {
 }
 
 export function LocationInfo({ close, latLng, currentPM25, tilesetIDs}: LocationProps) {
-    const [locationData, setLocationData] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch(`https://api.mapbox.com/search/geocode/v6/reverse?longitude=${latLng![1]}&latitude=${latLng![0]}&access_token=${process.env.NEXT_PUBLIC_MAPBOX_TOKEN}`);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
+    const { data: locationData, isLoading: loadingLocationData } = useQuery({
+        queryKey: [latLng],
+        queryFn: async () => {
+            const response = await fetch(`https://api.mapbox.com/search/geocode/v6/reverse?longitude=${latLng![1]}&latitude=${latLng![0]}&access_token=${process.env.NEXT_PUBLIC_MAPBOX_TOKEN}`);
+            if (response.ok) {
                 const data = await response.json();
-                setLocationData(data);
-            } catch (error: any) {
-                setError(error);
-            } finally {
-                setLoading(false);
+                return data;
             }
-        };
-        fetchData();
-    }, [latLng]);
-
-    function getAirQuality(pm25: number) {
-        if (pm25 <= 0) {
-            return 'Healthy';
-        }
-        else if (0 < pm25 && pm25 <= 20) { // Green
-            return 'Good';
-        }
-        else if (20 < pm25 && pm25 <= 35) { // Yellow
-            return 'Moderate';
-        }
-        else if (35 < pm25 && pm25 <= 80) { // Orange
-            return 'Unhealthy for Sensitive Groups';
-        }
-        else if (80 < pm25 && pm25 <= 160) { // Red
-            return 'Unhealthy for Everyone';
-        }
-        else if (160 < pm25 && pm25 <= 220) { // Purple
-            return 'Very Unhealthy';
-        }
-        else if (220 < pm25) { // Maroon
-            return 'Hazardous';
-        }
-    }
-
-    if (!loading && error == null) {
-        const address = (locationData as any)?.features[3]?.properties.full_address;
+            return null;
+        },
+    });
+    const graphData = useQueries({
+        queries: tilesetIDs.flat().map((id, index) => {
+          return {
+            queryKey: [`${latLng?.[0]},${latLng?.[1]},${index}`],
+            queryFn: async () => {
+              const response = await fetch(
+                `https://api.mapbox.com/v4/${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${id}/tilequery/${latLng![1]},${latLng![0]}.json?radius=6000&limit=1&access_token=${process.env.NEXT_PUBLIC_MAPBOX_TOKEN}`
+              );            
+              const data =  await response.json();
+              return {
+                name: index,
+                "PM-2.5": data.features[0] ? parseFloat(data.features[0].properties.PM25.toFixed(1)) : 0
+              }
+            }
+          }
+        }),
+        combine: (results) => {
+          const data = results.map((result) => result.data);
+          const loading = results.some((result) => result.isPending);
+          const empty = data.every((entry) => entry === undefined || entry["PM-2.5"] === 0);
+          return { data, loading, empty };
+        },
+    });
+    const address = (locationData as any)?.features[3]?.properties.full_address;
         
-        return (
-            <div className='location-info slide-in'>
-                <button className='location-info-close-button' onClick={close}>
-                    <FontAwesomeIcon icon={faX} className='text-white' />
-                </button>
-                <hr className='location-line mt-24' />
-                <div className='text-white mt-4 ml-3'>
-                        <h3 className='text-2s font-bold text-white'>{latLng![0].toFixed(2)}, {latLng![1].toFixed(2)}</h3>
-                    </div>
-                    {address != undefined && (
-                        <div className={`text-white ml-3 ${address != undefined ? 'mt-3' : ''}`}>
-                            <h3 className='text-2s font-bold text-white'>{address}</h3>
-                        </div>
-                    )}
-                    <div className='text-white mt-3 ml-3'>
-                        <h3 className='text-2s font-bold text-white'>PM-2.5: {currentPM25 == 0 ? 0 : currentPM25.toFixed(1)}</h3>
-                    </div>
-                    <div className='text-white mt-3 ml-3'>
-                        <h3 className='text-2s font-bold text-white'>Air Quality: {getAirQuality(currentPM25)}</h3>
-                    </div>
-                    <div className='mt-4 ml-3'>
-                        <ParticleMatterGraph latLng={latLng!} tilesetIDs={tilesetIDs}  />
-                    </div>
+    return (
+        <div className='location-info slide-in'>
+            <button className='location-info-close-button' onClick={close}>
+                <FontAwesomeIcon icon={faX} className='text-white' />
+            </button>
+            <div className='location-line mt-24'>
+                <BarLoader
+                    color={"#FFFFFF"}
+                    loading={(loadingLocationData || graphData.loading)}
+                    aria-label="Loading Spinner"
+                    data-testid="loader"
+                    width={"100%"}
+                    height={2}
+                />
+                {(!loadingLocationData && !graphData.loading) && (
+                    <hr className='location-line-loaded'/>
+                )}
             </div>
-        );
-    }
+            <div className='text-white mt-4 ml-3'>
+                <h3 className='text-2s font-bold text-white'>{latLng![0].toFixed(2)}, {latLng![1].toFixed(2)}</h3>
+            </div>
+            {address != undefined && (
+                <div className={`text-white ml-3 ${address != undefined ? 'mt-3' : ''}`}>
+                    <h3 className='text-2s font-bold text-white'>{address}</h3>
+                </div>
+            )}
+            <div className='text-white mt-3 ml-3'>
+                <h3 className='text-2s font-bold text-white'>PM-2.5: {currentPM25 == 0 ? "---" : currentPM25.toFixed(1)}</h3>
+            </div>
+            <div className='text-white mt-3 ml-3'>
+                <h3 className='text-2s font-bold text-white'>Air Quality: {currentPM25 == 0 ? "No Smoke Forecasted" : getAirQuality(currentPM25)}</h3>
+            </div>
+            <div className='mt-4 ml-3'>
+                <ParticleMatterGraph graphData={graphData}  />
+            </div>
+        </div>
+    );
 }
