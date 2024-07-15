@@ -69,7 +69,7 @@ export function LocationInfo({ close, latLng, currentPM25, tilesetIDs}: Location
                 )}
             </div>
             <div className='text-white mt-4 ml-3'>
-                <h3 className='text-2s font-bold text-white'>{latLng![0].toFixed(2)}, {latLng![1].toFixed(2)}</h3>
+                <h3 className='text-2s font-bold text-white'>{Math.abs(latLng![0]).toFixed(2)}° {latLng![0] > 0 ? "N" : "S"}, {Math.abs(latLng![1]).toFixed(2)}° {latLng![1] > 0 ? "E" : "W"}</h3>
             </div>
             {address != undefined && (
                 <div className={`text-white ml-3 ${address != undefined ? 'mt-3' : ''}`}>
