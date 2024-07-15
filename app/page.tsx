@@ -195,7 +195,7 @@ export default function Home() {
           onDateChange={onDateChange}
         />}
         {showInfo && (
-          <LocationInfo close={onCloseInfoClick} latLng={clickedLatLng} currentPM25={clickedPM25} tilesetIDs={allTilesetIDs} />
+          <LocationInfo close={onCloseInfoClick} latLng={clickedLatLng} currentPM25={clickedPM25} tilesetIDs={allTilesetIDs} currentTime={userTime}/>
         )}
         <MapGL
           ref={mapRef}

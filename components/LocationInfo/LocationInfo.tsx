@@ -10,10 +10,11 @@ interface LocationProps {
     close: () => void,
     latLng: [number, number] | null,
     currentPM25: number,
-    tilesetIDs: string[][]
+    tilesetIDs: string[][],
+    currentTime: Date,
 }
 
-export function LocationInfo({ close, latLng, currentPM25, tilesetIDs}: LocationProps) {
+export function LocationInfo({ close, latLng, currentPM25, tilesetIDs, currentTime}: LocationProps) {
     const { data: locationData, isLoading: loadingLocationData } = useQuery({
         queryKey: [latLng],
         queryFn: async () => {
@@ -35,8 +36,8 @@ export function LocationInfo({ close, latLng, currentPM25, tilesetIDs}: Location
               );            
               const data =  await response.json();
               return {
-                name: index,
-                "PM-2.5": data.features[0] ? parseFloat(data.features[0].properties.PM25.toFixed(1)) : 0
+                x: index,
+                y: data.features[0] ? parseFloat(data.features[0].properties.PM25.toFixed(1)) : 0
               }
             }
           }
@@ -44,7 +45,7 @@ export function LocationInfo({ close, latLng, currentPM25, tilesetIDs}: Location
         combine: (results) => {
           const data = results.map((result) => result.data);
           const loading = results.some((result) => result.isPending);
-          const empty = data.every((entry) => entry === undefined || entry["PM-2.5"] === 0);
+          const empty = data.every((entry) => entry === undefined || entry.y === 0);
           return { data, loading, empty };
         },
     });
@@ -83,7 +84,7 @@ export function LocationInfo({ close, latLng, currentPM25, tilesetIDs}: Location
                 <h3 className='text-2s font-bold text-white'>Air Quality: {currentPM25 == 0 ? "No Smoke Forecasted" : getAirQuality(currentPM25)}</h3>
             </div>
             <div className='mt-4 ml-3'>
-                <ParticleMatterGraph graphData={graphData}  />
+                <ParticleMatterGraph graphData={graphData} currentTime={currentTime} />
             </div>
         </div>
     );

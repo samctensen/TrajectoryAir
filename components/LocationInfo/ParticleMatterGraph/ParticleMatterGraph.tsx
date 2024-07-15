@@ -1,22 +1,24 @@
 import { getColor, getNextDays } from "@/functions";
-import { Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
+import { Line, LineChart, ReferenceLine, Tooltip, XAxis, YAxis } from "recharts";
+import { CustomTooltip } from "./CustomToolTip/CustomToolTip";
 
 interface GraphProps {
   graphData: {
     data: ({
-        name: number;
-        "PM-2.5": number;
+        x: number;
+        y: number;
     } | undefined)[];
     loading: boolean;
     empty: boolean;
   }
+  currentTime: Date
 }
 
-export const ParticleMatterGraph = ({ graphData }: GraphProps)  => {
-
+export const ParticleMatterGraph = ({ graphData, currentTime }: GraphProps)  => {
+  const currentHour = currentTime.getMinutes() < 30 ? currentTime.getHours() : currentTime.getHours() + 1
   const getMaxPM25Value = () => {
     if (!graphData || graphData.data.length === 0) return 0;
-    const pm25Values = graphData.data.map(entry => entry ? entry["PM-2.5"] : 0);
+    const pm25Values = graphData.data.map(entry => entry ? entry.y : 0);
     return Math.max(...pm25Values);
   };
   const yAxisTicks = () => {
@@ -58,34 +60,36 @@ export const ParticleMatterGraph = ({ graphData }: GraphProps)  => {
               <stop
                 key={index}
                 offset={`${(index / (graphData.data.length - 1)) * 100}%`}
-                stopColor={entry ? getColor(entry["PM-2.5"]) : "#98fc59"}
+                stopColor={entry ? getColor(entry.y) : "#98fc59"}
               />
             ))}
           </linearGradient>
         </defs>
+        <Line 
+          type="monotone" 
+          dataKey="y" 
+          stroke="url(#gradient)" 
+          dot={false} 
+          strokeWidth={3} 
+          activeDot={{fill: "transparent"}}
+        />
         <XAxis
-          dataKey="name"
+          dataKey="x"
           stroke="#FFFFFF"
           ticks={xAxisTicks}
           tickFormatter={formattedXAxisLabel}
           interval={0}
           fontSize={12}
         />
-        <YAxis 
+        <YAxis
+          dataKey="y"
           stroke="#FFFFFF" 
           ticks={yAxisTicks()}
           tickFormatter={formattedYAxisLabel}
           fontSize={12}
         />
-        <Tooltip/>
-        <Line 
-          type="monotone" 
-          dataKey="PM-2.5" 
-          stroke="url(#gradient)" 
-          dot={false} 
-          strokeWidth={3} 
-          activeDot={{fill: "transparent"}}
-        />
+        <Tooltip content={<CustomTooltip />} />
+        <ReferenceLine x={currentHour} stroke="gray"/>
       </LineChart>
     )
   }
