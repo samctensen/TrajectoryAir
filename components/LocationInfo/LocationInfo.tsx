@@ -58,11 +58,11 @@ export function LocationInfo({ close, latLng, currentPM25, tilesetIDs, currentTi
             </button>
             <div className='location-line mt-24'>
                 <BarLoader
-                    color={"#FFFFFF"}
+                    color={'#FFFFFF'}
                     loading={(loadingLocationData || graphData.loading)}
-                    aria-label="Loading Spinner"
-                    data-testid="loader"
-                    width={"100%"}
+                    aria-label='Loading Spinner'
+                    data-testid='loader'
+                    width={'100%'}
                     height={2}
                 />
                 {(!loadingLocationData && !graphData.loading) && (
@@ -70,7 +70,7 @@ export function LocationInfo({ close, latLng, currentPM25, tilesetIDs, currentTi
                 )}
             </div>
             <div className='text-white mt-4 ml-3'>
-                <h3 className='text-2s font-bold text-white'>{Math.abs(latLng![0]).toFixed(2)}° {latLng![0] > 0 ? "N" : "S"}, {Math.abs(latLng![1]).toFixed(2)}° {latLng![1] > 0 ? "E" : "W"}</h3>
+                <h3 className='text-2s font-bold text-white'>{Math.abs(latLng![0]).toFixed(2)}° {latLng![0] > 0 ? 'N' : 'S'}, {Math.abs(latLng![1]).toFixed(2)}° {latLng![1] > 0 ? 'E' : 'W'}</h3>
             </div>
             {address != undefined && (
                 <div className={`text-white ml-3 ${address != undefined ? 'mt-3' : ''}`}>
@@ -78,10 +78,10 @@ export function LocationInfo({ close, latLng, currentPM25, tilesetIDs, currentTi
                 </div>
             )}
             <div className='text-white mt-3 ml-3'>
-                <h3 className='text-2s font-bold text-white'>PM-2.5: {currentPM25 == 0 ? "---" : currentPM25.toFixed(1)}</h3>
+                <h3 className='text-2s font-bold text-white'>PM-2.5: {currentPM25 == 0 ? '---' : currentPM25.toFixed(1)}</h3>
             </div>
             <div className='text-white mt-3 ml-3'>
-                <h3 className='text-2s font-bold text-white'>Air Quality: {currentPM25 == 0 ? "No Smoke Forecasted" : getAirQuality(currentPM25)}</h3>
+                <h3 className='text-2s font-bold text-white'>Air Quality: {currentPM25 == 0 ? 'No Smoke Forecasted' : getAirQuality(currentPM25)}</h3>
             </div>
             <div className='mt-4 ml-3'>
                 <ParticleMatterGraph graphData={graphData} currentTime={currentTime} />

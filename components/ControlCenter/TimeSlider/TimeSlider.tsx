@@ -1,6 +1,6 @@
 import { faClock } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Slider, SliderThumb } from "@mui/material";
+import { Slider, SliderThumb } from '@mui/material';
 import './TimeSlider.css';
 
 interface TimeSliderProps {
@@ -46,9 +46,9 @@ export const TimeSlider = ({ sliderValue, onTimeChange }: TimeSliderProps) => {
                 slots={{
                     thumb: ClockThumbComponent,
                 }}
-                aria-label="Time"
+                aria-label='Time'
                 defaultValue={0}
-                valueLabelDisplay="auto"
+                valueLabelDisplay='auto'
                 valueLabelFormat={(value) => `${value % 12 === 0 ? 12 : value % 12} ${value >= 12 ? 'PM' : 'AM'}`}
                 step={1}
                 min={0}

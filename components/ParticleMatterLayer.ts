@@ -1017,9 +1017,9 @@ export const ParticleMatterLayer = (layerID: string, radius: number | mapboxgl.E
       'circle-radius': radius,
       'circle-opacity': opacity,
       'circle-blur': blur,
-      "circle-radius-transition": {duration: 500},
-      "circle-opacity-transition": {duration: 500},
-      "circle-blur-transition": {duration: 500}
+      'circle-radius-transition': {duration: 500},
+      'circle-opacity-transition': {duration: 500},
+      'circle-blur-transition': {duration: 500}
     },
   }
 };

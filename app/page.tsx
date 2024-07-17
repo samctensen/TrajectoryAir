@@ -7,7 +7,7 @@ import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import MapGL, { Layer, LngLatBoundsLike, MapLayerMouseEvent, MapRef, Source } from 'react-map-gl';
+import MapGL, { Layer, LngLatBoundsLike, MapLayerMouseEvent, MapRef, Marker, Source } from 'react-map-gl';
 config.autoAddCss = false;
 
 export default function Home() {
@@ -24,7 +24,7 @@ export default function Home() {
   const [dayPlaying, setDayPlaying] = useState(false);
   const [sliderDateIndex, setSliderDateIndex] = useState(0);
   const [sliderTime, setSliderTime] = useState(userTime.getMinutes() < 30 ? userTime.getHours() : userTime.getHours() + 1);
-  const [activeLayer, setActiveLayer] = useState(["ParticleMatterLayer2"]);
+  const [activeLayer, setActiveLayer] = useState(['ParticleMatterLayer2']);
   const [maxBounds, setMaxBounds] = useState<LngLatBoundsLike | null>(null);
   const [logoFadeOut, setLogoFadeOut] = useState(false);
   const [showLogo, setShowLogo] = useState(true);
@@ -106,6 +106,12 @@ export default function Home() {
       setDayPlaying(false);
       setShowCornerHUD(false);
       setClickedLatLng([event.lngLat.lat, event.lngLat.lng]);
+      mapRef.current?.flyTo({
+        center: event.lngLat,
+        bearing: 0,
+        pitch: 0,
+        duration: 1500
+      });
       const feature = event.features && event.features[0];
       if (feature && feature.properties) {
         const pm25 = feature.properties.PM25;
@@ -222,20 +228,25 @@ export default function Home() {
           dragPan={mapControlsEnabled}
           keyboard={mapControlsEnabled}
         >
+          {showInfo && (
+            <Marker longitude={clickedLatLng![1]} latitude={clickedLatLng![0]}>
+              <h1 className='text-2xl'>📍</h1>
+            </Marker>
+          )}
           <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[0]}`}>
-            <Layer {...ParticleMatterLayer("ParticleMatterLayer0", 0, 0, 0)}/>
+            <Layer {...ParticleMatterLayer('ParticleMatterLayer0', 0, 0, 0)}/>
           </Source>
           <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[1]}`}>
-            <Layer {...ParticleMatterLayer("ParticleMatterLayer1", 0, 0, 0)}/>
+            <Layer {...ParticleMatterLayer('ParticleMatterLayer1', 0, 0, 0)}/>
           </Source>
           <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[2]}`}>
-            <Layer {...ParticleMatterLayer("ParticleMatterLayer2", LAYER_RADIUS, 0, LAYER_BLUR)}/>
+            <Layer {...ParticleMatterLayer('ParticleMatterLayer2', LAYER_RADIUS, 0, LAYER_BLUR)}/>
           </Source>
           <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[3]}`}>
-            <Layer {...ParticleMatterLayer("ParticleMatterLayer3", 0, 0, 0)}/>
+            <Layer {...ParticleMatterLayer('ParticleMatterLayer3', 0, 0, 0)}/>
           </Source>
           <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[4]}`}>
-            <Layer {...ParticleMatterLayer("ParticleMatterLayer4", 0, 0, 0)}/>
+            <Layer {...ParticleMatterLayer('ParticleMatterLayer4', 0, 0, 0)}/>
           </Source>
         </MapGL>
     </main>

@@ -23,5 +23,5 @@ export const CornerHUD = ({ time, sliderDateIndex, showHUD }: CornerHUDProps) =>
             <h1 className='text-xl font-bold text-white ml-4 mt-1'>{`${DAYS_OF_WEEK[selectedDate.getDay()]}, ${time % 12 === 0 ? 12 : time % 12} ${time >= 12 ? 'PM' : 'AM'}`}</h1>
         </div>
     );
-  };
+};
   
