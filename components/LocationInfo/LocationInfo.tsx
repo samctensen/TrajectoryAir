@@ -31,14 +31,22 @@ export function LocationInfo({ close, latLng, currentPM25, tilesetIDs, currentTi
           return {
             queryKey: [`${latLng?.[0]},${latLng?.[1]},${index}`],
             queryFn: async () => {
-              const response = await fetch(
-                `https://api.mapbox.com/v4/${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${id}/tilequery/${latLng![1]},${latLng![0]}.json?radius=6000&limit=1&access_token=${process.env.NEXT_PUBLIC_MAPBOX_TOKEN}`
-              );            
-              const data =  await response.json();
-              return {
-                x: index,
-                y: data.features[0] ? parseFloat(data.features[0].properties.PM25.toFixed(1)) : 0
-              }
+                try {
+                    const response = await fetch(
+                        `https://api.mapbox.com/v4/${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${id}/tilequery/${latLng![1]},${latLng![0]}.json?radius=6000&limit=1&access_token=${process.env.NEXT_PUBLIC_MAPBOX_TOKEN}`
+                    );            
+                    const data =  await response.json();
+                    return {
+                        x: index,
+                        y: data.features[0] ? parseFloat(data.features[0].properties.PM25.toFixed(1)) : 0
+                    };
+                }
+                catch {
+                    return {
+                        x: index,
+                        y: 0,
+                    };
+                }
             }
           }
         }),

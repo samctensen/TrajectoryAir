@@ -46,6 +46,15 @@ export const ParticleMatterGraph = ({ graphData, currentTime }: GraphProps)  => 
     96: `${dates[4].getMonth() + 1}/${dates[4].getDate()}`,
   };
   const formattedXAxisLabel = (value: number) => xAxisLabelMap[value];
+  const gradientStops = () => {
+    return graphData.data.map((entry, index) => (
+      <stop
+        key={index}
+        offset={`${(index / (graphData.data.length - 1)) * 100}%`}
+        stopColor={getColor(entry?.y)}
+      />
+    ));
+  };
   if (!graphData.empty && !graphData.loading) {
     return (
       <LineChart
@@ -54,15 +63,9 @@ export const ParticleMatterGraph = ({ graphData, currentTime }: GraphProps)  => 
         data={graphData.data}
         margin={{ top: 0, right: 20, left: 20, bottom: 0 }}
       >
-        <defs>
-          <linearGradient id='gradient' x1='0' y1='0' x2='1' y2='0'>
-            {graphData.data.map((entry, index) => (
-              <stop
-                key={index}
-                offset={`${(index / (graphData.data.length - 1)) * 100}%`}
-                stopColor={entry ? getColor(entry.y) : '#98fc59'}
-              />
-            ))}
+       <defs>
+          <linearGradient id="gradient" x1="0" y1="0" x2="1" y2="0">
+            {gradientStops()}
           </linearGradient>
         </defs>
         <Line 

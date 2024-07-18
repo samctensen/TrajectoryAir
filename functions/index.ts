@@ -66,7 +66,8 @@ export function getAirQuality(pm25: number) {
   }
 }
 
-export function getColor(value: number): string {
+export function getColor(value: number | undefined): string {
+  if (value === undefined) return '#98fc59';
   if (value <=  0) return '#98fc59';
   if (value <=  0.25) return '#F9FFF7';
   if (value <=  0.5) return '#F3FFEE';
