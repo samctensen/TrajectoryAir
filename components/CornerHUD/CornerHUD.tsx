@@ -12,7 +12,7 @@ interface CornerHUDProps {
 export const CornerHUD = ({ time, sliderDateIndex, showHUD }: CornerHUDProps) => {
   
     const today = new Date();
-    const selectedDate = new Date(today.getDate() + sliderDateIndex);
+    const selectedDate = new Date(today.getTime() + sliderDateIndex * 86400000);
 
     return (
         <div className={`corner-logo ${showHUD ? 'hud-fade-in' : ''}`}>
