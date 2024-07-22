@@ -12,6 +12,8 @@ export const MAP_BOUNDARY: LngLatBoundsLike = [
 
 export const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
+export const MILLISECONDS_IN_A_DAY = 86400000;
+
 export const LAYER_OPACITY: mapboxgl.Expression = 
 [
     'interpolate',

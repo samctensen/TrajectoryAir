@@ -1,4 +1,4 @@
-import { DAYS_OF_WEEK } from '@/constants';
+import { DAYS_OF_WEEK, MILLISECONDS_IN_A_DAY } from '@/constants';
 import { faWind } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './CornerHUD.css';
@@ -12,7 +12,7 @@ interface CornerHUDProps {
 export const CornerHUD = ({ time, sliderDateIndex, showHUD }: CornerHUDProps) => {
   
     const today = new Date();
-    const selectedDate = new Date(today.getTime() + sliderDateIndex * 86400000);
+    const selectedDate = new Date(today.getTime() + sliderDateIndex * MILLISECONDS_IN_A_DAY);
 
     return (
         <div className={`corner-logo ${showHUD ? 'hud-fade-in' : ''}`}>
