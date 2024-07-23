@@ -12,9 +12,7 @@
     background-color: black;
     border-bottom-left-radius: 15px;
     border-bottom-right-radius: 15px;
-    margin-bottom: 25px;
-    z-index: 10;
-    cursor: pointer;
+    margin-bottom: 10px;
 }
   
 .slide-content {
@@ -30,7 +28,19 @@
     color: white;
     flex: 1;
 }
-  
-.slick-dots li.slick-active button:before {
-    color:white !important;
+
+.date-slider-left-arrow {
+    position: absolute;
+    top: 20%;
+    left: 5%;
+    z-index: 10;
+    pointer-events: auto;
+}
+
+.date-slider-right-arrow {
+    position: absolute;
+    top: 20%;
+    right: 5%;
+    z-index: 10;
+    pointer-events: auto;
 }

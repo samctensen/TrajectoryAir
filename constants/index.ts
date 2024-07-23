@@ -23,11 +23,7 @@ export const LAYER_OPACITY: mapboxgl.Expression =
     [
       'zoom'
     ],
-    2, 0.01,
-    3, 0.018,
-    4, 0.018,
-    6, 0.04,
-    10, 0.1,
+    10, 0.07,
 ]
 
 export const LAYER_RADIUS: mapboxgl.Expression = 
@@ -42,11 +38,11 @@ export const LAYER_RADIUS: mapboxgl.Expression =
     2, 2,
     3, 3,
     4, 8,
-    6, 15,
-    7, 20,
-    8, 25,
-    9, 50,
-    10, 130,
+    6, 30,
+    7, 50,
+    8, 75,
+    9, 100,
+    10, 150,
 ]
 
 export const LAYER_BLUR: mapboxgl.Expression = 
