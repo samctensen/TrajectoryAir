@@ -64,7 +64,7 @@ export const ParticleMatterGraph = ({ graphData, currentTime }: GraphProps)  => 
         margin={{ top: 0, right: 20, left: 20, bottom: 0 }}
       >
        <defs>
-          <linearGradient id="gradient" x1="0" y1="0" x2="1" y2="0">
+          <linearGradient id='gradient' x1='0' y1='0' x2='1' y2='0'>
             {gradientStops()}
           </linearGradient>
         </defs>
@@ -92,7 +92,16 @@ export const ParticleMatterGraph = ({ graphData, currentTime }: GraphProps)  => 
           fontSize={12}
         />
         <Tooltip content={<CustomTooltip />} />
-        <ReferenceLine x={currentHour} stroke='gray'/>
+        <ReferenceLine 
+          x={currentHour} 
+          stroke='gray' 
+          label={{
+            value: 'now', 
+            position: 'insideTopLeft', 
+            fill: 'gray', 
+            fontSize: 12, 
+          }}
+        />
       </LineChart>
     )
   }
