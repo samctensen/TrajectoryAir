@@ -7,7 +7,7 @@ import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import MapGL, { Layer, LngLatBoundsLike, MapLayerMouseEvent, MapRef, Marker, Source } from 'react-map-gl';
 config.autoAddCss = false;
 
@@ -222,6 +222,7 @@ export default function Home() {
 
   return (
     <main>
+      <Suspense>
         {showLogo && <Logo fadeOut={logoFadeOut} />}
         {animationDone && <CornerHUD time={sliderTime} sliderDateIndex={sliderDateIndex} showHUD={showCornerHUD}/>}
         {animationDone && <MapLegend showLegend={showLegend} onClick={onLegendButtonClick}/>}
@@ -284,6 +285,7 @@ export default function Home() {
             <Layer {...ParticleMatterLayer('ParticleMatterLayer4', 0, 0, 0)}/>
           </Source>
         </MapGL>
+      </Suspense>
     </main>
   );
 }
