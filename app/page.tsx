@@ -7,7 +7,7 @@ import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import MapGL, { Layer, LngLatBoundsLike, MapLayerMouseEvent, MapRef, Marker, Source } from 'react-map-gl';
 config.autoAddCss = false;
 
@@ -222,70 +222,68 @@ export default function Home() {
 
   return (
     <main>
-      <Suspense fallback={<div>Loading...</div>}>
-        {showLogo && <Logo fadeOut={logoFadeOut} />}
-        {animationDone && <CornerHUD time={sliderTime} sliderDateIndex={sliderDateIndex} showHUD={showCornerHUD}/>}
-        {animationDone && <MapLegend showLegend={showLegend} onClick={onLegendButtonClick}/>}
-        {animationDone && <ControlCenter 
-          showControls={showControlCenter}
-          sliderTime={sliderTime}
-          onTimeChange={onTimeChange}
-          playing={dayPlaying}
-          onPlayPauseClicked={onPlayPauseClick}
-          onSkipClicked={onSkipClicked}
-          sliderDays={sliderDays}
-          onDateChange={onDateChange}
-        />}
+      {showLogo && <Logo fadeOut={logoFadeOut} />}
+      {animationDone && <CornerHUD time={sliderTime} sliderDateIndex={sliderDateIndex} showHUD={showCornerHUD}/>}
+      {animationDone && <MapLegend showLegend={showLegend} onClick={onLegendButtonClick}/>}
+      {animationDone && <ControlCenter 
+        showControls={showControlCenter}
+        sliderTime={sliderTime}
+        onTimeChange={onTimeChange}
+        playing={dayPlaying}
+        onPlayPauseClicked={onPlayPauseClick}
+        onSkipClicked={onSkipClicked}
+        sliderDays={sliderDays}
+        onDateChange={onDateChange}
+      />}
+      {showInfo && (
+        <LocationInfo close={onCloseInfoClick} latLng={clickedLatLng} currentPM25={clickedPM25} tilesetIDs={allTilesetIDs} currentTime={userTime}/>
+      )}
+      <MapGL
+        ref={mapRef}
+        mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
+        attributionControl={false}
+        initialViewState={{
+          latitude: 50,
+          longitude: -130,
+          zoom: 4,
+          bearing: 55,
+          pitch: 60,
+        }}
+        mapStyle='mapbox://styles/mapbox/dark-v11'
+        maxZoom={10}
+        style={{ width: '100%', height: '100%' }}
+        interactiveLayerIds={activeLayer}
+        onClick={onMapClick}
+        onLoad={initialMapAnimation}
+        maxBounds={maxBounds!}
+        scrollZoom={mapControlsEnabled}
+        boxZoom={mapControlsEnabled}
+        doubleClickZoom={mapControlsEnabled}
+        dragRotate={mapControlsEnabled}
+        dragPan={mapControlsEnabled}
+        keyboard={mapControlsEnabled}
+      >
         {showInfo && (
-          <LocationInfo close={onCloseInfoClick} latLng={clickedLatLng} currentPM25={clickedPM25} tilesetIDs={allTilesetIDs} currentTime={userTime}/>
+          <Marker longitude={clickedLatLng![1]} latitude={clickedLatLng![0]}>
+            <h1 className='text-2xl'>📍</h1>
+          </Marker>
         )}
-        <MapGL
-          ref={mapRef}
-          mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
-          attributionControl={false}
-          initialViewState={{
-            latitude: 50,
-            longitude: -130,
-            zoom: 4,
-            bearing: 55,
-            pitch: 60,
-          }}
-          mapStyle='mapbox://styles/mapbox/dark-v11'
-          maxZoom={10}
-          style={{ width: '100%', height: '100%' }}
-          interactiveLayerIds={activeLayer}
-          onClick={onMapClick}
-          onLoad={initialMapAnimation}
-          maxBounds={maxBounds!}
-          scrollZoom={mapControlsEnabled}
-          boxZoom={mapControlsEnabled}
-          doubleClickZoom={mapControlsEnabled}
-          dragRotate={mapControlsEnabled}
-          dragPan={mapControlsEnabled}
-          keyboard={mapControlsEnabled}
-        >
-          {showInfo && (
-            <Marker longitude={clickedLatLng![1]} latitude={clickedLatLng![0]}>
-              <h1 className='text-2xl'>📍</h1>
-            </Marker>
-          )}
-          <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[0]}`}>
-            <Layer {...ParticleMatterLayer('ParticleMatterLayer0', 0, 0, 0)}/>
-          </Source>
-          <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[1]}`}>
-            <Layer {...ParticleMatterLayer('ParticleMatterLayer1', 0, 0, 0)}/>
-          </Source>
-          <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[2]}`}>
-            <Layer {...ParticleMatterLayer('ParticleMatterLayer2', LAYER_RADIUS, 0, LAYER_BLUR)}/>
-          </Source>
-          <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[3]}`}>
-            <Layer {...ParticleMatterLayer('ParticleMatterLayer3', 0, 0, 0)}/>
-          </Source>
-          <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[4]}`}>
-            <Layer {...ParticleMatterLayer('ParticleMatterLayer4', 0, 0, 0)}/>
-          </Source>
-        </MapGL>
-      </Suspense>
+        <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[0]}`}>
+          <Layer {...ParticleMatterLayer('ParticleMatterLayer0', 0, 0, 0)}/>
+        </Source>
+        <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[1]}`}>
+          <Layer {...ParticleMatterLayer('ParticleMatterLayer1', 0, 0, 0)}/>
+        </Source>
+        <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[2]}`}>
+          <Layer {...ParticleMatterLayer('ParticleMatterLayer2', LAYER_RADIUS, 0, LAYER_BLUR)}/>
+        </Source>
+        <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[3]}`}>
+          <Layer {...ParticleMatterLayer('ParticleMatterLayer3', 0, 0, 0)}/>
+        </Source>
+        <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[4]}`}>
+          <Layer {...ParticleMatterLayer('ParticleMatterLayer4', 0, 0, 0)}/>
+        </Source>
+      </MapGL>
     </main>
   );
 }
