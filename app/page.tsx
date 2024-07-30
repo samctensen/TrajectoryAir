@@ -222,7 +222,7 @@ export default function Home() {
 
   return (
     <main>
-      <Suspense>
+      <Suspense fallback={<div>Loading...</div>}>
         {showLogo && <Logo fadeOut={logoFadeOut} />}
         {animationDone && <CornerHUD time={sliderTime} sliderDateIndex={sliderDateIndex} showHUD={showCornerHUD}/>}
         {animationDone && <MapLegend showLegend={showLegend} onClick={onLegendButtonClick}/>}
