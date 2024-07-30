@@ -6,11 +6,16 @@ import { getAllTilesets, getNextDays, negativeModulo } from '@/functions';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import MapGL, { Layer, LngLatBoundsLike, MapLayerMouseEvent, MapRef, Marker, Source } from 'react-map-gl';
 config.autoAddCss = false;
 
 export default function Home() {
+  const router = useRouter()
+  const searchParams = useSearchParams();
+  const lat = searchParams.get('lat');
+  const lng = searchParams.get('lng');
   const mapRef = useRef<MapRef | null>(null);
   const { userLocation, userTime } = useUserLocation();
   const userTimezone = useMemo(() => {
@@ -32,7 +37,7 @@ export default function Home() {
   const [showControlCenter, setShowControlCenter] = useState(false);
   const [showCornerHUD, setShowCornerHUD] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
-  const [clickedLatLng, setClickedLatLng] = useState<[number, number] | null>(null);
+  const [clickedLatLng, setClickedLatLng] = useState<[number, number] | null>((lat && lng) ? [Number(lat), Number(lng)] : null);
   const [clickedPM25, setClickedPM25] = useState<number>(0);
   const sliderDays = getNextDays();
   const allTilesetIDs: string[][] = getAllTilesets(userTimezone);
@@ -64,13 +69,33 @@ export default function Home() {
     setLogoFadeOut(true);
     if (mapRef.current) {
       mapRef.current.getMap().setPaintProperty(`ParticleMatterLayer2`, 'circle-opacity', LAYER_OPACITY);
-      mapRef.current.flyTo({
-        center: [(userLocation?.longitude || U_OF_U_DEFAULT_COORDS.lon), (userLocation?.latitude || U_OF_U_DEFAULT_COORDS.lat)],
-        zoom: 8,
-        bearing: 0,
-        pitch: 0,
-        duration: 4000,
-      });
+      if (lat && lng) {
+        mapRef.current.flyTo({
+          center: [Number(lng), Number(lat)],
+          zoom: 6,
+          bearing: 0,
+          pitch: 0,
+          duration: 4000,
+        });
+      }
+      else if (userLocation?.latitude && userLocation?.longitude) {
+        mapRef.current.flyTo({
+          center: [userLocation.longitude, userLocation.latitude],
+          zoom: 6,
+          bearing: 0,
+          pitch: 0,
+          duration: 4000,
+        });
+      }
+      else {
+        mapRef.current.flyTo({
+          center: [U_OF_U_DEFAULT_COORDS.lon, U_OF_U_DEFAULT_COORDS.lat],
+          zoom: 6,
+          bearing: 0,
+          pitch: 0,
+          duration: 4000,
+        });
+      }
       setMaxBounds(MAP_BOUNDARY);
       setTimeout(() => {
         setShowLogo(false);
@@ -78,7 +103,13 @@ export default function Home() {
         setMapControls(true);
         setShowCornerHUD(true);
         setShowControlCenter(true);
-        setDayPlaying(true);
+        if (lat && lng) {
+          setShowInfo(true);
+          setDayPlaying(false);
+        }
+        else {
+          setDayPlaying(true);
+        }
       }, 3500);
     }
   }
@@ -119,6 +150,10 @@ export default function Home() {
       } else {
         setClickedPM25(0);
       }
+      const params = new URLSearchParams(searchParams);
+      params.set('lat', event.lngLat.lat.toString());
+      params.set('lng', event.lngLat.lng.toString());
+      router.replace(`/?${params.toString()}`);
     }
   }
 
