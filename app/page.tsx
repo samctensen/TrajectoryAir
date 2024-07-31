@@ -72,7 +72,6 @@ export default function Home() {
       if (lat && lng) {
         mapRef.current.flyTo({
           center: [Number(lng), Number(lat)],
-          zoom: 6,
           bearing: 0,
           pitch: 0,
           duration: 4000,
@@ -199,22 +198,14 @@ export default function Home() {
       const nextLayer = (newTime + 2) % 24;
       setTilesetIDs(tilesetIDs.with((activeLayer + 3) % 5, allTilesetIDs[sliderDateIndex][nextLayer]));
       mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-opacity', 0);
-      mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-radius', 0);
-      mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-blur', 0);
-      mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${(activeLayer + 1) % 5}`, 'circle-radius', LAYER_RADIUS);
-      mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${(activeLayer + 1) % 5}`, 'circle-blur', LAYER_BLUR);
       mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${(activeLayer + 1) % 5}`, 'circle-opacity', LAYER_OPACITY);
       setActiveLayer([`ParticleMatterLayer${(activeLayer + 1) % 5}`])
     }
     else {
       const nextLayer = negativeModulo(newTime - 2, 24);
       setTilesetIDs(tilesetIDs.with(negativeModulo(activeLayer - 3, 5), allTilesetIDs[sliderDateIndex][nextLayer]));
-      mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-radius', 0);
       mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-opacity', 0);
-      mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-blur', 0);
-      mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${negativeModulo(activeLayer - 1, 5)}`, 'circle-radius', LAYER_RADIUS);
       mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${negativeModulo(activeLayer - 1, 5)}`, 'circle-opacity', LAYER_OPACITY);
-      mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${negativeModulo(activeLayer - 1, 5)}`, 'circle-blur', LAYER_BLUR);
       setActiveLayer([`ParticleMatterLayer${negativeModulo(activeLayer - 1, 5)}`])
     }
     setSliderTime(newTime);
@@ -269,19 +260,19 @@ export default function Home() {
           </Marker>
         )}
         <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[0]}`}>
-          <Layer {...ParticleMatterLayer('ParticleMatterLayer0', 0, 0, 0)}/>
+          <Layer {...ParticleMatterLayer('ParticleMatterLayer0', LAYER_RADIUS, 0, LAYER_BLUR)}/>
         </Source>
         <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[1]}`}>
-          <Layer {...ParticleMatterLayer('ParticleMatterLayer1', 0, 0, 0)}/>
+          <Layer {...ParticleMatterLayer('ParticleMatterLayer1', LAYER_RADIUS, 0, LAYER_BLUR)}/>
         </Source>
         <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[2]}`}>
           <Layer {...ParticleMatterLayer('ParticleMatterLayer2', LAYER_RADIUS, 0, LAYER_BLUR)}/>
         </Source>
         <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[3]}`}>
-          <Layer {...ParticleMatterLayer('ParticleMatterLayer3', 0, 0, 0)}/>
+          <Layer {...ParticleMatterLayer('ParticleMatterLayer3', LAYER_RADIUS, 0, LAYER_BLUR)}/>
         </Source>
         <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[4]}`}>
-          <Layer {...ParticleMatterLayer('ParticleMatterLayer4', 0, 0, 0)}/>
+          <Layer {...ParticleMatterLayer('ParticleMatterLayer4', LAYER_RADIUS, 0, LAYER_BLUR)}/>
         </Source>
       </MapGL>
     </main>

@@ -14,17 +14,7 @@ export const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursd
 
 export const MILLISECONDS_IN_A_DAY = 86400000;
 
-export const LAYER_OPACITY: mapboxgl.Expression = 
-[
-    'interpolate',
-    [
-      'linear'
-    ],
-    [
-      'zoom'
-    ],
-    10, 0.07,
-]
+export const LAYER_OPACITY = 0.1;
 
 export const LAYER_RADIUS: mapboxgl.Expression = 
 [
@@ -35,14 +25,15 @@ export const LAYER_RADIUS: mapboxgl.Expression =
     [
       'zoom'
     ],
-    2, 2,
-    3, 3,
+    2, 1,
+    3, 2,
     4, 8,
-    6, 30,
-    7, 50,
-    8, 75,
+    5, 10,
+    6, 15,
+    7, 25,
+    8, 60,
     9, 100,
-    10, 150,
+    10, 160,
 ]
 
 export const LAYER_BLUR: mapboxgl.Expression = 
@@ -54,11 +45,13 @@ export const LAYER_BLUR: mapboxgl.Expression =
     [
       'zoom'
     ],
-    2, 0,
-    4, 0,
-    6, 0.2,
-    7, 0.6,
-    8, 0.7,
-    9, 0.8,
-    10, 0.9,
+    2, 0.2,
+    3, 0.3,
+    4, 0.4,
+    5, 0.5,
+    6, 0.6,
+    7, 0.7,
+    8, 0.8,
+    9, 0.9,
+    10, 1,
 ]
