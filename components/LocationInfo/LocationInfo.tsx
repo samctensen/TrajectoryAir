@@ -1,7 +1,8 @@
 import { getAirQuality } from '@/functions';
-import { faX } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUpFromBracket, faX } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useQueries, useQuery } from '@tanstack/react-query';
+import toast, { Toaster } from 'react-hot-toast';
 import { BarLoader } from 'react-spinners';
 import './LocationInfo.css';
 import { ParticleMatterGraph } from './ParticleMatterGraph/ParticleMatterGraph';
@@ -68,6 +69,7 @@ export function LocationInfo({ close, latLng, tilesetIDs, currentTime, sliderDat
     },
   });
   const address = (locationData as any)?.features[3]?.properties.full_address;
+
   return (
     <div className='location-info slide-in'>
         <button className='location-info-close-button' onClick={close}>
@@ -103,6 +105,31 @@ export function LocationInfo({ close, latLng, tilesetIDs, currentTime, sliderDat
         <div className='mt-4 ml-3'>
           <ParticleMatterGraph graphData={graphData} currentTime={currentTime} />
         </div>
+        <button className='location-info-share-button' onClick={async () => {
+          try {
+            await navigator.clipboard.writeText(window.location.href);
+            toast.success('Link copied to clipboard.', {
+              style: {
+                fontSize: '12px',
+                padding: '8px 8px',
+              },
+              iconTheme: {
+                primary: '#000000',
+                secondary: '#FFFFFF',
+              },
+            });
+          } catch (err) {
+            toast.error('Failed to copy link to clipboard.', {
+              style: {
+                fontSize: '12px',
+                padding: '8px 8px',
+              },
+            });
+          }
+        }}>
+            <FontAwesomeIcon icon={faArrowUpFromBracket} className='text-white' />
+        </button>
+        <Toaster position='bottom-center'/>
     </div>
   );
 }

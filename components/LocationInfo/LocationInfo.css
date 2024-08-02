@@ -19,6 +19,14 @@
     cursor: pointer;
 }
 
+.location-info-share-button {
+    position: absolute;
+    bottom: 10px;
+    left: 15px;
+    border: none;
+    cursor: pointer;
+}
+
 @keyframes slide-in {
     from {
         transform: translateX(-100%);
