@@ -38,7 +38,6 @@ export default function Home() {
   const [showCornerHUD, setShowCornerHUD] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const [clickedLatLng, setClickedLatLng] = useState<[number, number] | null>((lat && lng) ? [Number(lat), Number(lng)] : null);
-  const [clickedPM25, setClickedPM25] = useState<number>(0);
   const sliderDays = getNextDays();
   const allTilesetIDs: string[][] = getAllTilesets(userTimezone);
   const [tilesetIDs, setTilesetIDs] = useState([
@@ -142,13 +141,6 @@ export default function Home() {
         pitch: 0,
         duration: 1500
       });
-      const feature = event.features && event.features[0];
-      if (feature && feature.properties) {
-        const pm25 = feature.properties.PM25;
-        setClickedPM25(pm25);
-      } else {
-        setClickedPM25(0);
-      }
       const params = new URLSearchParams(searchParams);
       params.set('lat', event.lngLat.lat.toString());
       params.set('lng', event.lngLat.lng.toString());
@@ -227,7 +219,14 @@ export default function Home() {
         onDateChange={onDateChange}
       />}
       {showInfo && (
-        <LocationInfo close={onCloseInfoClick} latLng={clickedLatLng} currentPM25={clickedPM25} tilesetIDs={allTilesetIDs} currentTime={userTime}/>
+        <LocationInfo
+          close={onCloseInfoClick}
+          tilesetIDs={allTilesetIDs}
+          latLng={clickedLatLng}
+          sliderDateIndex={sliderDateIndex}
+          sliderTime={sliderTime}
+          currentTime={userTime}
+        />
       )}
       <MapGL
         ref={mapRef}

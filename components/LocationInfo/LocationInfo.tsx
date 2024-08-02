@@ -8,13 +8,14 @@ import { ParticleMatterGraph } from './ParticleMatterGraph/ParticleMatterGraph';
 
 interface LocationProps {
   close: () => void,
-  latLng: [number, number] | null,
-  currentPM25: number,
   tilesetIDs: string[][],
+  latLng: [number, number] | null,
+  sliderDateIndex: number,
+  sliderTime: number,
   currentTime: Date,
 }
 
-export function LocationInfo({ close, latLng, currentPM25, tilesetIDs, currentTime}: LocationProps) {
+export function LocationInfo({ close, latLng, tilesetIDs, currentTime, sliderDateIndex, sliderTime}: LocationProps) {
   const currentHour = currentTime.getMinutes() < 30 ? currentTime.getHours() : currentTime.getHours() + 1
   const { data: locationData, isLoading: loadingLocationData } = useQuery({
       queryKey: [latLng],
@@ -94,13 +95,13 @@ export function LocationInfo({ close, latLng, currentPM25, tilesetIDs, currentTi
             </div>
         )}
         <div className='text-white mt-3 ml-3'>
-            <h3 className='text-2s font-bold text-white'>PM-2.5: {(graphData.loading && currentPM25 == 0) ? "---" : graphData.data[currentHour]?.y}</h3>
+          <h3 className='text-2s font-bold text-white'>PM-2.5: {graphData.data[24 * sliderDateIndex + sliderTime]?.y === 0 || graphData.data[24 * sliderDateIndex + sliderTime] === undefined ? "---" : graphData.data[24 * sliderDateIndex + sliderTime]?.y}</h3>
         </div>
         <div className='text-white mt-3 ml-3'>
-            <h3 className='text-2s font-bold text-white'>Air Quality: {currentPM25 == 0 ? 'No Smoke Forecasted' : getAirQuality(currentPM25)}</h3>
+          <h3 className='text-2s font-bold text-white'>Air Quality: {graphData.data[24 * sliderDateIndex + sliderTime]?.y === 0 || graphData.data[24 * sliderDateIndex + sliderTime] === undefined ? "No Smoke Forecasted" : getAirQuality(graphData.data[24 * sliderDateIndex + sliderTime]?.y)}</h3>
         </div>
         <div className='mt-4 ml-3'>
-            <ParticleMatterGraph graphData={graphData} currentTime={currentTime} />
+          <ParticleMatterGraph graphData={graphData} currentTime={currentTime} />
         </div>
     </div>
   );

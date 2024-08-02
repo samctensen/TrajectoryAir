@@ -42,27 +42,27 @@ export function getNextDays() {
   return dates;
 }
 
-export function getAirQuality(pm25: number) {
-  if (pm25 <= 0) {
-      return 'Healthy';
+export function getAirQuality(pm25: number | undefined): string {
+  if (pm25 === undefined || pm25 == 0) {
+    return "No Smoke Forecasted";
   }
   else if (0 < pm25 && pm25 <= 20) { // Green
-      return 'Good';
+    return 'Good';
   }
   else if (20 < pm25 && pm25 <= 35) { // Yellow
-      return 'Moderate';
+    return 'Moderate';
   }
   else if (35 < pm25 && pm25 <= 80) { // Orange
-      return 'Unhealthy for Sensitive Groups';
+    return 'Unhealthy for Sensitive Groups';
   }
   else if (80 < pm25 && pm25 <= 160) { // Red
-      return 'Unhealthy for Everyone';
+    return 'Unhealthy for Everyone';
   }
   else if (160 < pm25 && pm25 <= 220) { // Purple
-      return 'Very Unhealthy';
+    return 'Very Unhealthy';
   }
-  else if (220 < pm25) { // Maroon
-      return 'Hazardous';
+  else { // Maroon
+    return 'Hazardous';
   }
 }
 
