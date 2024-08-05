@@ -1,72 +1,72 @@
 .legend {
-    display: flex;
-    flex-direction: row;
-    background-color: black;
-    align-items: center;
-    position: absolute;
-    top: 10%;
-    right: 0;
-    padding-left: 10px;
-    padding-right: 5px;
-    border-top-left-radius: 10px;
-    border-bottom-left-radius: 10px;
-    z-index: 10;
+  display: flex;
+  flex-direction: row;
+  background-color: black;
+  align-items: center;
+  position: absolute;
+  top: 10%;
+  right: 0;
+  padding-left: 10px;
+  padding-right: 5px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  z-index: 10;
 }
 
 .legend-container {
-    display: flex;
-    flex-direction: column;
-    background-color: black;
-    align-items: flex-start;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding-left: 5px;
+  display: flex;
+  flex-direction: column;
+  background-color: black;
+  align-items: flex-start;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 5px;
 }
 
 .legend-row {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin: 5px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 5px;
 }
 
 .legend-color {
-    width: 30px;
-    height: 30px;
-    border-radius: 7px;
-    border-color: white;
-    border-width: 2px;
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  border-color: white;
+  border-width: 2px;
 }
-  
+
 .legend-line {
-    border-top: 2px solid white;
-    width: 7px;
+  border-top: 2px solid white;
+  width: 7px;
 }
 
 @keyframes legend-slide-in {
-    from {
-        transform: translateX(286px);
-    }
+  from {
+    transform: translateX(286px);
+  }
 
-    to {
-        transform: translateX(0%);
-    }
+  to {
+    transform: translateX(0%);
+  }
 }
 
 .legend-slide-in {
-    animation: legend-slide-in 0.5s forwards;
+  animation: legend-slide-in 0.5s forwards;
 }
 
 @keyframes legend-slide-out {
-    from {
-        transform: translateX(0%);
-    }
+  from {
+    transform: translateX(0%);
+  }
 
-    to {
-        transform: translateX(286px);
-    }
+  to {
+    transform: translateX(286px);
+  }
 }
 
 .legend-slide-out {
-    animation: legend-slide-out 0.5s forwards;
+  animation: legend-slide-out 0.5s forwards;
 }

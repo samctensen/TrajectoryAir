@@ -1,17 +1,17 @@
 .corner-logo {
-    background-color: transparent;
-    position: absolute;
-    width: 300px;
-    top: 10px;
-    left: 15px;
-    z-index: 11;
-    pointer-events: none;
+  background-color: transparent;
+  position: absolute;
+  width: 300px;
+  top: 10px;
+  left: 15px;
+  z-index: 11;
+  pointer-events: none;
 }
 
 .hud-fade-in {
-    animation: fade-in 1s forwards;
+  animation: fade-in 1s forwards;
 }
 
 .hud-fade-out {
-    animation: fade-out 0.5s forwards;
+  animation: fade-out 0.5s forwards;
 }

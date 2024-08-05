@@ -1,15 +1,15 @@
 .time-container {
-    position: absolute;
-    bottom: 45px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 250px;
-    pointer-events: auto;
-    background-color: black;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    margin-bottom: 25px;
-    display: flex;
-    justify-content: center;
-    z-index: 11;
+  position: absolute;
+  bottom: 45px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 250px;
+  pointer-events: auto;
+  background-color: black;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  margin-bottom: 25px;
+  display: flex;
+  justify-content: center;
+  z-index: 11;
 }

@@ -1,24 +1,37 @@
-import { getColor, getNextDays } from '@/functions';
-import { Line, LineChart, ReferenceLine, Tooltip, XAxis, YAxis } from 'recharts';
-import { CustomTooltip } from './CustomToolTip/CustomToolTip';
+import { getColor, getNextDays } from "@/functions";
+import {
+  Line,
+  LineChart,
+  ReferenceLine,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import { CustomTooltip } from "./CustomToolTip/CustomToolTip";
 
 interface GraphProps {
   graphData: {
-    data: ({
-        x: number;
-        y: number;
-    } | undefined)[];
+    data: (
+      | {
+          x: number;
+          y: number;
+        }
+      | undefined
+    )[];
     loading: boolean;
     empty: boolean;
-  }
-  currentTime: Date
+  };
+  currentTime: Date;
 }
 
-export const ParticleMatterGraph = ({ graphData, currentTime }: GraphProps)  => {
-  const currentHour = currentTime.getMinutes() < 30 ? currentTime.getHours() : currentTime.getHours() + 1
+export const ParticleMatterGraph = ({ graphData, currentTime }: GraphProps) => {
+  const currentHour =
+    currentTime.getMinutes() < 30
+      ? currentTime.getHours()
+      : currentTime.getHours() + 1;
   const getMaxPM25Value = () => {
     if (!graphData || graphData.data.length === 0) return 0;
-    const pm25Values = graphData.data.map(entry => entry ? entry.y : 0);
+    const pm25Values = graphData.data.map((entry) => (entry ? entry.y : 0));
     return Math.max(...pm25Values);
   };
   const yAxisTicks = () => {
@@ -30,10 +43,10 @@ export const ParticleMatterGraph = ({ graphData, currentTime }: GraphProps)  => 
     return [12, 23, 45, 250];
   };
   const yAxisLabelMap: { [key: number]: string } = {
-    12: 'Good',
-    23: 'Moderate',
-    45: 'Unhealthy',
-    250: 'Hazardous'
+    12: "Good",
+    23: "Moderate",
+    45: "Unhealthy",
+    250: "Hazardous",
   };
   const formattedYAxisLabel = (value: number) => yAxisLabelMap[value];
 
@@ -63,46 +76,46 @@ export const ParticleMatterGraph = ({ graphData, currentTime }: GraphProps)  => 
         data={graphData.data}
         margin={{ top: 0, right: 20, left: 20, bottom: 0 }}
       >
-       <defs>
-          <linearGradient id='gradient' x1='0' y1='0' x2='1' y2='0'>
+        <defs>
+          <linearGradient id="gradient" x1="0" y1="0" x2="1" y2="0">
             {gradientStops()}
           </linearGradient>
         </defs>
-        <Line 
-          type='monotone' 
-          dataKey='y' 
-          stroke='url(#gradient)' 
-          dot={false} 
-          strokeWidth={3} 
-          activeDot={{fill: 'transparent'}}
+        <Line
+          type="monotone"
+          dataKey="y"
+          stroke="url(#gradient)"
+          dot={false}
+          strokeWidth={3}
+          activeDot={{ fill: "transparent" }}
         />
         <XAxis
-          dataKey='x'
-          stroke='#FFFFFF'
+          dataKey="x"
+          stroke="#FFFFFF"
           ticks={xAxisTicks}
           tickFormatter={formattedXAxisLabel}
           interval={0}
           fontSize={12}
         />
         <YAxis
-          dataKey='y'
-          stroke='#FFFFFF' 
+          dataKey="y"
+          stroke="#FFFFFF"
           ticks={yAxisTicks()}
           tickFormatter={formattedYAxisLabel}
           fontSize={12}
         />
         <Tooltip content={<CustomTooltip />} />
-        <ReferenceLine 
-          x={currentHour} 
-          stroke='gray' 
+        <ReferenceLine
+          x={currentHour}
+          stroke="gray"
           label={{
-            value: 'now', 
-            position: 'insideTopLeft', 
-            fill: 'gray', 
-            fontSize: 12, 
+            value: "now",
+            position: "insideTopLeft",
+            fill: "gray",
+            fontSize: 12,
           }}
         />
       </LineChart>
-    )
+    );
   }
-}
+};

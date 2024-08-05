@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 const useGeoJSON = (url: string) => {
   const [geoJSONData, setData] = useState(null);
@@ -14,7 +14,7 @@ const useGeoJSON = (url: string) => {
         const json = await response.json();
         setData(json);
       } catch (error) {
-        console.error('Error fetching the GeoJSON data:', error);
+        console.error("Error fetching the GeoJSON data:", error);
       } finally {
         setLoading(false);
       }
@@ -32,7 +32,7 @@ const useGeoJSON = (url: string) => {
       const json = await response.json();
       setData(json);
     } catch (error) {
-      console.error('Error fetching the GeoJSON data:', error);
+      console.error("Error fetching the GeoJSON data:", error);
     } finally {
       setLoading(false);
     }

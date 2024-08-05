@@ -1,46 +1,46 @@
 .slider-container .slick-slider {
-    pointer-events: auto;
+  pointer-events: auto;
 }
-  
+
 .slider-container {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 250px;
-    pointer-events: none;
-    background-color: black;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-    margin-bottom: 10px;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 250px;
+  pointer-events: none;
+  background-color: black;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  margin-bottom: 10px;
 }
-  
+
 .slide-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    padding: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 6px;
 }
-  
+
 .slide-text {
-    text-align: center;
-    color: white;
-    flex: 1;
+  text-align: center;
+  color: white;
+  flex: 1;
 }
 
 .date-slider-left-arrow {
-    position: absolute;
-    top: 20%;
-    left: 5%;
-    z-index: 10;
-    pointer-events: auto;
+  position: absolute;
+  top: 20%;
+  left: 5%;
+  z-index: 10;
+  pointer-events: auto;
 }
 
 .date-slider-right-arrow {
-    position: absolute;
-    top: 20%;
-    right: 5%;
-    z-index: 10;
-    pointer-events: auto;
+  position: absolute;
+  top: 20%;
+  right: 5%;
+  z-index: 10;
+  pointer-events: auto;
 }

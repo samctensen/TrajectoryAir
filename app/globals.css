@@ -24,7 +24,8 @@ main {
   height: 100%;
 }
 
-html, #__next {
+html,
+#__next {
   height: 100%;
   margin: 0;
   padding: 0;

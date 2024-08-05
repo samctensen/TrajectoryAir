@@ -1,21 +1,41 @@
-'use client';
-import { ControlCenter, CornerHUD, LocationInfo, Logo, MapLegend, ParticleMatterLayer } from '@/components';
-import useUserLocation from '@/components/useUserLocation';
-import { LAYER_BLUR, LAYER_OPACITY, LAYER_RADIUS, MAP_BOUNDARY, U_OF_U_DEFAULT_COORDS } from '@/constants';
-import { getAllTilesets, getNextDays, negativeModulo } from '@/functions';
-import { config } from '@fortawesome/fontawesome-svg-core';
-import '@fortawesome/fontawesome-svg-core/styles.css';
-import 'mapbox-gl/dist/mapbox-gl.css';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import MapGL, { Layer, LngLatBoundsLike, MapLayerMouseEvent, MapRef, Marker, Source } from 'react-map-gl';
+"use client";
+import {
+  ControlCenter,
+  CornerHUD,
+  LocationInfo,
+  Logo,
+  MapLegend,
+  ParticleMatterLayer,
+} from "@/components";
+import useUserLocation from "@/components/useUserLocation";
+import {
+  LAYER_BLUR,
+  LAYER_OPACITY,
+  LAYER_RADIUS,
+  MAP_BOUNDARY,
+  U_OF_U_DEFAULT_COORDS,
+} from "@/constants";
+import { getAllTilesets, getNextDays, negativeModulo } from "@/functions";
+import { config } from "@fortawesome/fontawesome-svg-core";
+import "@fortawesome/fontawesome-svg-core/styles.css";
+import "mapbox-gl/dist/mapbox-gl.css";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useRef, useState } from "react";
+import MapGL, {
+  Layer,
+  LngLatBoundsLike,
+  MapLayerMouseEvent,
+  MapRef,
+  Marker,
+  Source,
+} from "react-map-gl";
 config.autoAddCss = false;
 
 export default function Home() {
-  const router = useRouter()
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const lat = searchParams.get('lat');
-  const lng = searchParams.get('lng');
+  const lat = searchParams.get("lat");
+  const lng = searchParams.get("lng");
   const mapRef = useRef<MapRef | null>(null);
   const { userLocation, userTime } = useUserLocation();
   const userTimezone = useMemo(() => {
@@ -28,8 +48,10 @@ export default function Home() {
   const [mapControlsEnabled, setMapControls] = useState(false);
   const [dayPlaying, setDayPlaying] = useState(false);
   const [sliderDateIndex, setSliderDateIndex] = useState(0);
-  const [sliderTime, setSliderTime] = useState(userTime.getMinutes() < 30 ? userTime.getHours() : userTime.getHours() + 1);
-  const [activeLayer, setActiveLayer] = useState(['ParticleMatterLayer2']);
+  const [sliderTime, setSliderTime] = useState(
+    userTime.getMinutes() < 30 ? userTime.getHours() : userTime.getHours() + 1
+  );
+  const [activeLayer, setActiveLayer] = useState(["ParticleMatterLayer2"]);
   const [maxBounds, setMaxBounds] = useState<LngLatBoundsLike | null>(null);
   const [logoFadeOut, setLogoFadeOut] = useState(false);
   const [showLogo, setShowLogo] = useState(true);
@@ -37,7 +59,9 @@ export default function Home() {
   const [showControlCenter, setShowControlCenter] = useState(false);
   const [showCornerHUD, setShowCornerHUD] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
-  const [clickedLatLng, setClickedLatLng] = useState<[number, number] | null>((lat && lng) ? [Number(lat), Number(lng)] : null);
+  const [clickedLatLng, setClickedLatLng] = useState<[number, number] | null>(
+    lat && lng ? [Number(lat), Number(lng)] : null
+  );
   const sliderDays = getNextDays();
   const allTilesetIDs: string[][] = getAllTilesets(userTimezone);
   const [tilesetIDs, setTilesetIDs] = useState([
@@ -45,7 +69,7 @@ export default function Home() {
     allTilesetIDs[sliderDateIndex][negativeModulo(sliderTime - 1, 24)],
     allTilesetIDs[sliderDateIndex][sliderTime % 24],
     allTilesetIDs[sliderDateIndex][(sliderTime + 1) % 24],
-    allTilesetIDs[sliderDateIndex][(sliderTime + 2) % 24]
+    allTilesetIDs[sliderDateIndex][(sliderTime + 2) % 24],
   ]);
 
   useEffect(() => {
@@ -67,7 +91,13 @@ export default function Home() {
   function initialMapAnimation() {
     setLogoFadeOut(true);
     if (mapRef.current) {
-      mapRef.current.getMap().setPaintProperty(`ParticleMatterLayer2`, 'circle-opacity', LAYER_OPACITY);
+      mapRef.current
+        .getMap()
+        .setPaintProperty(
+          `ParticleMatterLayer2`,
+          "circle-opacity",
+          LAYER_OPACITY
+        );
       if (lat && lng) {
         mapRef.current.flyTo({
           center: [Number(lng), Number(lat)],
@@ -75,8 +105,7 @@ export default function Home() {
           pitch: 0,
           duration: 4000,
         });
-      }
-      else if (userLocation?.latitude && userLocation?.longitude) {
+      } else if (userLocation?.latitude && userLocation?.longitude) {
         mapRef.current.flyTo({
           center: [userLocation.longitude, userLocation.latitude],
           zoom: 6,
@@ -84,8 +113,7 @@ export default function Home() {
           pitch: 0,
           duration: 4000,
         });
-      }
-      else {
+      } else {
         mapRef.current.flyTo({
           center: [U_OF_U_DEFAULT_COORDS.lon, U_OF_U_DEFAULT_COORDS.lat],
           zoom: 6,
@@ -104,8 +132,7 @@ export default function Home() {
         if (lat && lng) {
           setShowInfo(true);
           setDayPlaying(false);
-        }
-        else {
+        } else {
           setDayPlaying(true);
         }
       }, 3500);
@@ -113,9 +140,9 @@ export default function Home() {
   }
 
   function onDateChange(current: number, next: number) {
-    let index = 0
+    let index = 0;
     if (next > current) {
-      index = current + 1
+      index = current + 1;
     } else if (next < current && next != 0) {
       index = current - 1;
     }
@@ -125,8 +152,8 @@ export default function Home() {
       allTilesetIDs[index][negativeModulo(sliderTime - 1, 24)],
       allTilesetIDs[index][sliderTime % 24],
       allTilesetIDs[index][(sliderTime + 1) % 24],
-      allTilesetIDs[index][(sliderTime + 2) % 24]
-    ])
+      allTilesetIDs[index][(sliderTime + 2) % 24],
+    ]);
   }
 
   function onMapClick(event: MapLayerMouseEvent) {
@@ -139,11 +166,11 @@ export default function Home() {
         center: event.lngLat,
         bearing: 0,
         pitch: 0,
-        duration: 1500
+        duration: 1500,
       });
       const params = new URLSearchParams(searchParams);
-      params.set('lat', event.lngLat.lat.toString());
-      params.set('lng', event.lngLat.lng.toString());
+      params.set("lat", event.lngLat.lat.toString());
+      params.set("lng", event.lngLat.lng.toString());
       router.replace(`/?${params.toString()}`);
     }
   }
@@ -175,19 +202,31 @@ export default function Home() {
   }
 
   function getActiveLayer(): number {
-    if (mapRef.current?.getMap().getPaintProperty('ParticleMatterLayer0', 'circle-opacity') != 0) {
+    if (
+      mapRef.current
+        ?.getMap()
+        .getPaintProperty("ParticleMatterLayer0", "circle-opacity") != 0
+    ) {
       return 0;
-    }
-    else if (mapRef.current?.getMap().getPaintProperty('ParticleMatterLayer1', 'circle-opacity') != 0) {
+    } else if (
+      mapRef.current
+        ?.getMap()
+        .getPaintProperty("ParticleMatterLayer1", "circle-opacity") != 0
+    ) {
       return 1;
-    }
-    else if (mapRef.current?.getMap().getPaintProperty('ParticleMatterLayer2', 'circle-opacity') != 0) {
+    } else if (
+      mapRef.current
+        ?.getMap()
+        .getPaintProperty("ParticleMatterLayer2", "circle-opacity") != 0
+    ) {
       return 2;
-    }
-    else if (mapRef.current?.getMap().getPaintProperty('ParticleMatterLayer3', 'circle-opacity') != 0) {
+    } else if (
+      mapRef.current
+        ?.getMap()
+        .getPaintProperty("ParticleMatterLayer3", "circle-opacity") != 0
+    ) {
       return 3;
-    }
-    else {
+    } else {
       return 4;
     }
   }
@@ -198,17 +237,52 @@ export default function Home() {
     const activeLayer = getActiveLayer();
     if (increment > 0) {
       const nextLayer = (newTime + 2) % 24;
-      setTilesetIDs(tilesetIDs.with((activeLayer + 3) % 5, allTilesetIDs[sliderDateIndex][nextLayer]));
-      mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-opacity', 0);
-      mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${(activeLayer + 1) % 5}`, 'circle-opacity', LAYER_OPACITY);
-      setActiveLayer([`ParticleMatterLayer${(activeLayer + 1) % 5}`])
-    }
-    else {
+      setTilesetIDs(
+        tilesetIDs.with(
+          (activeLayer + 3) % 5,
+          allTilesetIDs[sliderDateIndex][nextLayer]
+        )
+      );
+      mapRef.current
+        ?.getMap()
+        .setPaintProperty(
+          `ParticleMatterLayer${activeLayer}`,
+          "circle-opacity",
+          0
+        );
+      mapRef.current
+        ?.getMap()
+        .setPaintProperty(
+          `ParticleMatterLayer${(activeLayer + 1) % 5}`,
+          "circle-opacity",
+          LAYER_OPACITY
+        );
+      setActiveLayer([`ParticleMatterLayer${(activeLayer + 1) % 5}`]);
+    } else {
       const nextLayer = negativeModulo(newTime - 2, 24);
-      setTilesetIDs(tilesetIDs.with(negativeModulo(activeLayer - 3, 5), allTilesetIDs[sliderDateIndex][nextLayer]));
-      mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${activeLayer}`, 'circle-opacity', 0);
-      mapRef.current?.getMap().setPaintProperty(`ParticleMatterLayer${negativeModulo(activeLayer - 1, 5)}`, 'circle-opacity', LAYER_OPACITY);
-      setActiveLayer([`ParticleMatterLayer${negativeModulo(activeLayer - 1, 5)}`])
+      setTilesetIDs(
+        tilesetIDs.with(
+          negativeModulo(activeLayer - 3, 5),
+          allTilesetIDs[sliderDateIndex][nextLayer]
+        )
+      );
+      mapRef.current
+        ?.getMap()
+        .setPaintProperty(
+          `ParticleMatterLayer${activeLayer}`,
+          "circle-opacity",
+          0
+        );
+      mapRef.current
+        ?.getMap()
+        .setPaintProperty(
+          `ParticleMatterLayer${negativeModulo(activeLayer - 1, 5)}`,
+          "circle-opacity",
+          LAYER_OPACITY
+        );
+      setActiveLayer([
+        `ParticleMatterLayer${negativeModulo(activeLayer - 1, 5)}`,
+      ]);
     }
     setSliderTime(newTime);
   }
@@ -216,18 +290,28 @@ export default function Home() {
   return (
     <main>
       {showLogo && <Logo fadeOut={logoFadeOut} />}
-      {animationDone && <CornerHUD time={sliderTime} sliderDateIndex={sliderDateIndex} showHUD={showCornerHUD}/>}
-      {animationDone && <MapLegend showLegend={showLegend} onClick={onLegendButtonClick}/>}
-      {animationDone && <ControlCenter 
-        showControls={showControlCenter}
-        sliderTime={sliderTime}
-        onTimeChange={onTimeChange}
-        playing={dayPlaying}
-        onPlayPauseClicked={onPlayPauseClick}
-        onSkipClicked={onSkipClicked}
-        sliderDays={sliderDays}
-        onDateChange={onDateChange}
-      />}
+      {animationDone && (
+        <CornerHUD
+          time={sliderTime}
+          sliderDateIndex={sliderDateIndex}
+          showHUD={showCornerHUD}
+        />
+      )}
+      {animationDone && (
+        <MapLegend showLegend={showLegend} onClick={onLegendButtonClick} />
+      )}
+      {animationDone && (
+        <ControlCenter
+          showControls={showControlCenter}
+          sliderTime={sliderTime}
+          onTimeChange={onTimeChange}
+          playing={dayPlaying}
+          onPlayPauseClicked={onPlayPauseClick}
+          onSkipClicked={onSkipClicked}
+          sliderDays={sliderDays}
+          onDateChange={onDateChange}
+        />
+      )}
       {showInfo && (
         <LocationInfo
           close={onCloseInfoClick}
@@ -250,9 +334,9 @@ export default function Home() {
           bearing: 55,
           pitch: 60,
         }}
-        mapStyle='mapbox://styles/mapbox/dark-v11'
+        mapStyle="mapbox://styles/mapbox/dark-v11"
         maxZoom={10}
-        style={{ width: '100%', height: '100%' }}
+        style={{ width: "100%", height: "100%" }}
         interactiveLayerIds={activeLayer}
         onClick={onMapClick}
         onLoad={initialMapAnimation}
@@ -266,23 +350,73 @@ export default function Home() {
       >
         {showInfo && (
           <Marker longitude={clickedLatLng![1]} latitude={clickedLatLng![0]}>
-            <h1 className='text-2xl'>📍</h1>
+            <h1 className="text-2xl">📍</h1>
           </Marker>
         )}
-        <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[0]}`}>
-          <Layer {...ParticleMatterLayer('ParticleMatterLayer0', LAYER_RADIUS, 0, LAYER_BLUR)}/>
+        <Source
+          type="vector"
+          url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[0]}`}
+        >
+          <Layer
+            {...ParticleMatterLayer(
+              "ParticleMatterLayer0",
+              LAYER_RADIUS,
+              0,
+              LAYER_BLUR
+            )}
+          />
         </Source>
-        <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[1]}`}>
-          <Layer {...ParticleMatterLayer('ParticleMatterLayer1', LAYER_RADIUS, 0, LAYER_BLUR)}/>
+        <Source
+          type="vector"
+          url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[1]}`}
+        >
+          <Layer
+            {...ParticleMatterLayer(
+              "ParticleMatterLayer1",
+              LAYER_RADIUS,
+              0,
+              LAYER_BLUR
+            )}
+          />
         </Source>
-        <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[2]}`}>
-          <Layer {...ParticleMatterLayer('ParticleMatterLayer2', LAYER_RADIUS, 0, LAYER_BLUR)}/>
+        <Source
+          type="vector"
+          url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[2]}`}
+        >
+          <Layer
+            {...ParticleMatterLayer(
+              "ParticleMatterLayer2",
+              LAYER_RADIUS,
+              0,
+              LAYER_BLUR
+            )}
+          />
         </Source>
-        <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[3]}`}>
-          <Layer {...ParticleMatterLayer('ParticleMatterLayer3', LAYER_RADIUS, 0, LAYER_BLUR)}/>
+        <Source
+          type="vector"
+          url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[3]}`}
+        >
+          <Layer
+            {...ParticleMatterLayer(
+              "ParticleMatterLayer3",
+              LAYER_RADIUS,
+              0,
+              LAYER_BLUR
+            )}
+          />
         </Source>
-        <Source type='vector' url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[4]}`}>
-          <Layer {...ParticleMatterLayer('ParticleMatterLayer4', LAYER_RADIUS, 0, LAYER_BLUR)}/>
+        <Source
+          type="vector"
+          url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[4]}`}
+        >
+          <Layer
+            {...ParticleMatterLayer(
+              "ParticleMatterLayer4",
+              LAYER_RADIUS,
+              0,
+              LAYER_BLUR
+            )}
+          />
         </Source>
       </MapGL>
     </main>
