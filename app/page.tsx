@@ -164,6 +164,16 @@ export default function Home() {
     setSliderTime(value);
   }
 
+  function setLatLng(lat: number, lng: number) {
+    setClickedLatLng([lat, lng]);
+    mapRef.current?.flyTo({
+      center: [Number(lng), Number(lat)],
+      bearing: 0,
+      pitch: 0,
+      duration: 4000,
+    });
+  }
+
   function getActiveLayer(): number {
     if (mapRef.current?.getMap().getPaintProperty('ParticleMatterLayer0', 'circle-opacity') != 0) {
       return 0;
@@ -223,6 +233,7 @@ export default function Home() {
           close={onCloseInfoClick}
           tilesetIDs={allTilesetIDs}
           latLng={clickedLatLng}
+          setLatLng={setLatLng}
           sliderDateIndex={sliderDateIndex}
           sliderTime={sliderTime}
           currentTime={userTime}
