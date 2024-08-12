@@ -1,3 +1,4 @@
+
 export function negativeModulo(numerator: number, denominator: number): number {
   let result = numerator % denominator;
   if (result < 0) {
@@ -6,36 +7,9 @@ export function negativeModulo(numerator: number, denominator: number): number {
   return result;
 }
 
-export function getAllTilesets(timezone: number): string[][] {
-  const listOfTilesets: string[][] = [];
-  for (let index = 0; index < 5; index++) {
-    let currentDay = new Date();
-    currentDay.setDate(currentDay.getDate() + index);
-    const currentTilesets = getDaysTilesets(currentDay, timezone);
-    listOfTilesets.push(currentTilesets);
-  }
-  return listOfTilesets;
-}
-
-export function getDaysTilesets(date: Date, timezone: number): string[] {
-  let newDate = new Date(date.getTime());
-  let nextDay = new Date(newDate.getDate() + 1);
-  const ids = [];
-  for (let index = 0; index < 24; index++) {
-    if (index + timezone > 23 && newDate.getTime() !== nextDay.getTime()) {
-      newDate.setDate(nextDay.getTime());
-    }
-    let dateString = newDate.toISOString().split("T")[0] + "_";
-    dateString =
-      dateString + ((index + timezone) % 24).toString().padStart(2, "0");
-    ids.push(dateString);
-  }
-  return ids;
-}
-
-export function getNextDays() {
+export function getNextDays(numberOfDays: number): Date[] {
   const dates = [];
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < numberOfDays; i++) {
     const date = new Date();
     date.setDate(date.getDate() + i);
     dates.push(date);

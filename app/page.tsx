@@ -7,7 +7,8 @@ import {
   MapLegend,
   ParticleMatterLayer,
 } from "@/components";
-import useUserLocation from "@/components/useUserLocation";
+import { useLocation } from "@/components/LocationProvider";
+import { useTilesets } from "@/components/TilesetProvider";
 import {
   LAYER_BLUR,
   LAYER_OPACITY,
@@ -15,12 +16,12 @@ import {
   MAP_BOUNDARY,
   U_OF_U_DEFAULT_COORDS,
 } from "@/constants";
-import { getAllTilesets, getNextDays, negativeModulo } from "@/functions";
+import { getNextDays, negativeModulo } from "@/functions";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import MapGL, {
   Layer,
   LngLatBoundsLike,
@@ -37,13 +38,8 @@ export default function Home() {
   const lat = searchParams.get("lat");
   const lng = searchParams.get("lng");
   const mapRef = useRef<MapRef | null>(null);
-  const { userLocation, userTime } = useUserLocation();
-  const userTimezone = useMemo(() => {
-    const offsetInMinutes = new Date().getTimezoneOffset();
-    const offsetHours = Math.abs(Math.floor(offsetInMinutes / 60));
-    const offsetSign = offsetInMinutes < 0 ? -1 : 1;
-    return offsetSign * offsetHours;
-  }, []);
+  const { userLocation, userTime } = useLocation();
+  const { allTilesetIDs, activeTilesets, setActiveTilesets, tilesetsLoading } = useTilesets();
   const [animationDone, setAnimationDone] = useState(false);
   const [mapControlsEnabled, setMapControls] = useState(false);
   const [dayPlaying, setDayPlaying] = useState(false);
@@ -62,15 +58,7 @@ export default function Home() {
   const [clickedLatLng, setClickedLatLng] = useState<[number, number] | null>(
     lat && lng ? [Number(lat), Number(lng)] : null
   );
-  const sliderDays = getNextDays();
-  const allTilesetIDs: string[][] = getAllTilesets(userTimezone);
-  const [tilesetIDs, setTilesetIDs] = useState([
-    allTilesetIDs[sliderDateIndex][negativeModulo(sliderTime - 2, 24)],
-    allTilesetIDs[sliderDateIndex][negativeModulo(sliderTime - 1, 24)],
-    allTilesetIDs[sliderDateIndex][sliderTime % 24],
-    allTilesetIDs[sliderDateIndex][(sliderTime + 1) % 24],
-    allTilesetIDs[sliderDateIndex][(sliderTime + 2) % 24],
-  ]);
+  const sliderDays = getNextDays(allTilesetIDs.length);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -143,16 +131,22 @@ export default function Home() {
     let index = 0;
     if (next > current) {
       index = current + 1;
-    } else if (next < current && next != 0) {
+    } else if (next < current && next !== 0) {
       index = current - 1;
     }
     setSliderDateIndex(index);
-    setTilesetIDs([
-      allTilesetIDs[index][negativeModulo(sliderTime - 2, 24)],
-      allTilesetIDs[index][negativeModulo(sliderTime - 1, 24)],
-      allTilesetIDs[index][sliderTime % 24],
-      allTilesetIDs[index][(sliderTime + 1) % 24],
-      allTilesetIDs[index][(sliderTime + 2) % 24],
+  
+    const index0 = allTilesetIDs[index][negativeModulo(sliderTime - 2, 24)];
+    const index1 = allTilesetIDs[index][negativeModulo(sliderTime - 1, 24)];
+    const index2 = allTilesetIDs[index][negativeModulo(sliderTime, 24)];
+    const index3 = allTilesetIDs[index][negativeModulo(sliderTime + 1, 24)];
+    const index4 = allTilesetIDs[index][negativeModulo(sliderTime + 2, 24)];
+    setActiveTilesets([
+      index0,
+      index1,
+      index2,
+      index3,
+      index4,
     ]);
   }
 
@@ -237,8 +231,8 @@ export default function Home() {
     const activeLayer = getActiveLayer();
     if (increment > 0) {
       const nextLayer = (newTime + 2) % 24;
-      setTilesetIDs(
-        tilesetIDs.with(
+      setActiveTilesets(
+        activeTilesets.with(
           (activeLayer + 3) % 5,
           allTilesetIDs[sliderDateIndex][nextLayer]
         )
@@ -260,8 +254,8 @@ export default function Home() {
       setActiveLayer([`ParticleMatterLayer${(activeLayer + 1) % 5}`]);
     } else {
       const nextLayer = negativeModulo(newTime - 2, 24);
-      setTilesetIDs(
-        tilesetIDs.with(
+      setActiveTilesets(
+        activeTilesets.with(
           negativeModulo(activeLayer - 3, 5),
           allTilesetIDs[sliderDateIndex][nextLayer]
         )
@@ -353,9 +347,11 @@ export default function Home() {
             <h1 className="text-2xl">📍</h1>
           </Marker>
         )}
-        <Source
+        {!tilesetsLoading && (
+          <>
+          <Source
           type="vector"
-          url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[0]}`}
+          url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${activeTilesets[0]}`}
         >
           <Layer
             {...ParticleMatterLayer(
@@ -368,7 +364,7 @@ export default function Home() {
         </Source>
         <Source
           type="vector"
-          url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[1]}`}
+          url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${activeTilesets[1]}`}
         >
           <Layer
             {...ParticleMatterLayer(
@@ -381,7 +377,7 @@ export default function Home() {
         </Source>
         <Source
           type="vector"
-          url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[2]}`}
+          url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${activeTilesets[2]}`}
         >
           <Layer
             {...ParticleMatterLayer(
@@ -394,7 +390,7 @@ export default function Home() {
         </Source>
         <Source
           type="vector"
-          url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[3]}`}
+          url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${activeTilesets[3]}`}
         >
           <Layer
             {...ParticleMatterLayer(
@@ -407,7 +403,7 @@ export default function Home() {
         </Source>
         <Source
           type="vector"
-          url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${tilesetIDs[4]}`}
+          url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${activeTilesets[4]}`}
         >
           <Layer
             {...ParticleMatterLayer(
@@ -418,6 +414,8 @@ export default function Home() {
             )}
           />
         </Source>
+          </>
+        )}
       </MapGL>
     </main>
   );
