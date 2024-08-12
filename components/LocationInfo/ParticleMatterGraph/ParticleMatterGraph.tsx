@@ -50,7 +50,7 @@ export const ParticleMatterGraph = ({ graphData, currentTime }: GraphProps) => {
   };
   const formattedYAxisLabel = (value: number) => yAxisLabelMap[value];
 
-  const dates = getNextDays();
+  const dates = getNextDays(5);
   const xAxisTicks = [24, 48, 72, 96];
   const xAxisLabelMap: { [key: number]: string } = {
     24: `${dates[1].getMonth() + 1}/${dates[1].getDate()}`,
