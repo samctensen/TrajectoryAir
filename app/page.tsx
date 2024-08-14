@@ -39,7 +39,8 @@ export default function Home() {
   const lng = searchParams.get("lng");
   const mapRef = useRef<MapRef | null>(null);
   const { userLocation, userTime } = useLocation();
-  const { allTilesetIDs, activeTilesets, setActiveTilesets, tilesetsLoading } = useTilesets();
+  const { allTilesetIDs, activeTilesets, setActiveTilesets, tilesetsLoading } =
+    useTilesets();
   const [animationDone, setAnimationDone] = useState(false);
   const [mapControlsEnabled, setMapControls] = useState(false);
   const [dayPlaying, setDayPlaying] = useState(false);
@@ -135,19 +136,27 @@ export default function Home() {
       index = current - 1;
     }
     setSliderDateIndex(index);
-  
-    const index0 = allTilesetIDs[index][negativeModulo(sliderTime - 2, 24)];
-    const index1 = allTilesetIDs[index][negativeModulo(sliderTime - 1, 24)];
-    const index2 = allTilesetIDs[index][negativeModulo(sliderTime, 24)];
-    const index3 = allTilesetIDs[index][negativeModulo(sliderTime + 1, 24)];
-    const index4 = allTilesetIDs[index][negativeModulo(sliderTime + 2, 24)];
     setActiveTilesets([
-      index0,
-      index1,
-      index2,
-      index3,
-      index4,
+      allTilesetIDs[index][negativeModulo(sliderTime - 2, 24)],
+      allTilesetIDs[index][negativeModulo(sliderTime - 1, 24)],
+      allTilesetIDs[index][negativeModulo(sliderTime, 24)],
+      allTilesetIDs[index][negativeModulo(sliderTime + 1, 24)],
+      allTilesetIDs[index][negativeModulo(sliderTime + 2, 24)],
     ]);
+    mapRef.current
+      ?.getMap()
+      .setPaintProperty(
+        `ParticleMatterLayer${getActiveLayer()}`,
+        "circle-opacity",
+        0
+      );
+    mapRef.current
+      ?.getMap()
+      .setPaintProperty(
+        `ParticleMatterLayer2`,
+        "circle-opacity",
+        LAYER_OPACITY
+      );
   }
 
   function onMapClick(event: MapLayerMouseEvent) {
@@ -349,71 +358,71 @@ export default function Home() {
         )}
         {!tilesetsLoading && (
           <>
-          <Source
-          type="vector"
-          url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${activeTilesets[0]}`}
-        >
-          <Layer
-            {...ParticleMatterLayer(
-              "ParticleMatterLayer0",
-              LAYER_RADIUS,
-              0,
-              LAYER_BLUR
-            )}
-          />
-        </Source>
-        <Source
-          type="vector"
-          url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${activeTilesets[1]}`}
-        >
-          <Layer
-            {...ParticleMatterLayer(
-              "ParticleMatterLayer1",
-              LAYER_RADIUS,
-              0,
-              LAYER_BLUR
-            )}
-          />
-        </Source>
-        <Source
-          type="vector"
-          url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${activeTilesets[2]}`}
-        >
-          <Layer
-            {...ParticleMatterLayer(
-              "ParticleMatterLayer2",
-              LAYER_RADIUS,
-              0,
-              LAYER_BLUR
-            )}
-          />
-        </Source>
-        <Source
-          type="vector"
-          url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${activeTilesets[3]}`}
-        >
-          <Layer
-            {...ParticleMatterLayer(
-              "ParticleMatterLayer3",
-              LAYER_RADIUS,
-              0,
-              LAYER_BLUR
-            )}
-          />
-        </Source>
-        <Source
-          type="vector"
-          url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${activeTilesets[4]}`}
-        >
-          <Layer
-            {...ParticleMatterLayer(
-              "ParticleMatterLayer4",
-              LAYER_RADIUS,
-              0,
-              LAYER_BLUR
-            )}
-          />
-        </Source>
+            <Source
+              type="vector"
+              url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${activeTilesets[0]}`}
+            >
+              <Layer
+                {...ParticleMatterLayer(
+                  "ParticleMatterLayer0",
+                  LAYER_RADIUS,
+                  0,
+                  LAYER_BLUR
+                )}
+              />
+            </Source>
+            <Source
+              type="vector"
+              url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${activeTilesets[1]}`}
+            >
+              <Layer
+                {...ParticleMatterLayer(
+                  "ParticleMatterLayer1",
+                  LAYER_RADIUS,
+                  0,
+                  LAYER_BLUR
+                )}
+              />
+            </Source>
+            <Source
+              type="vector"
+              url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${activeTilesets[2]}`}
+            >
+              <Layer
+                {...ParticleMatterLayer(
+                  "ParticleMatterLayer2",
+                  LAYER_RADIUS,
+                  0,
+                  LAYER_BLUR
+                )}
+              />
+            </Source>
+            <Source
+              type="vector"
+              url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${activeTilesets[3]}`}
+            >
+              <Layer
+                {...ParticleMatterLayer(
+                  "ParticleMatterLayer3",
+                  LAYER_RADIUS,
+                  0,
+                  LAYER_BLUR
+                )}
+              />
+            </Source>
+            <Source
+              type="vector"
+              url={`mapbox://${process.env.NEXT_PUBLIC_MAPBOX_USERNAME}.${activeTilesets[4]}`}
+            >
+              <Layer
+                {...ParticleMatterLayer(
+                  "ParticleMatterLayer4",
+                  LAYER_RADIUS,
+                  0,
+                  LAYER_BLUR
+                )}
+              />
+            </Source>
           </>
         )}
       </MapGL>
