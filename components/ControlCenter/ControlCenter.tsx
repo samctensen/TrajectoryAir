@@ -15,6 +15,7 @@ interface ControlCenterProps {
   onPlayPauseClicked(): void;
   onSkipClicked(increment: number): void;
   sliderDays: Date[];
+  sliderDateIndex: number
   onDateChange(current: number, next: number): void;
 }
 
@@ -26,6 +27,7 @@ export const ControlCenter = ({
   onPlayPauseClicked,
   onSkipClicked,
   sliderDays,
+  sliderDateIndex,
   onDateChange,
 }: ControlCenterProps) => {
   return (
@@ -34,13 +36,13 @@ export const ControlCenter = ({
         showControls ? "control-center-fade-in" : ""
       }`}
     >
-      <TimeSlider sliderValue={sliderTime} onTimeChange={onTimeChange} />
+      <TimeSlider sliderValue={sliderTime} onTimeChange={onTimeChange} sliderDateIndex={sliderDateIndex}/>
       <MediaControls
         playing={playing}
         onPlayPauseClicked={onPlayPauseClicked}
         onSkipClicked={onSkipClicked}
       />
-      <DateSlider sliderDays={sliderDays} onDateChange={onDateChange} />
+      <DateSlider sliderDays={sliderDays} onDateChange={onDateChange}/>
     </div>
   );
 };

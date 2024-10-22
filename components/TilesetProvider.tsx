@@ -44,13 +44,11 @@ function getDaysTilesets(date: Date, timezone: number, dayIndex: number): string
   for (let index = 0; index <  (dayIndex !== 3 ? 24 : 24 - timezone + 1); index++) {
     if (index + timezone > 23 && newDate.getTime() !== nextDay.getTime()) {
       newDate.setDate(nextDay.getDate());
-      dayIndex++;
     }
     if (dayIndex > 3) {
       return ids;
     }
-    //let dateString = newDate.toISOString().split("T")[0] + "_";
-    let dateString = dayIndex + "_";
+    let dateString = newDate.toISOString().split("T")[0] + "_";
     dateString =
       dateString + ((index + timezone) % 24).toString().padStart(2, "0");
     ids.push(dateString);

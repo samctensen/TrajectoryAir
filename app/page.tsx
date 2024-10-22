@@ -129,19 +129,14 @@ export default function Home() {
   }
 
   function onDateChange(current: number, next: number) {
-    let index = 0;
-    if (next > current) {
-      index = current + 1;
-    } else if (next < current && next !== 0) {
-      index = current - 1;
-    }
-    setSliderDateIndex(index);
+    console.log(next)
+    setSliderDateIndex(next);
     setActiveTilesets([
-      allTilesetIDs[index][negativeModulo(sliderTime - 2, 24)],
-      allTilesetIDs[index][negativeModulo(sliderTime - 1, 24)],
-      allTilesetIDs[index][negativeModulo(sliderTime, 24)],
-      allTilesetIDs[index][negativeModulo(sliderTime + 1, 24)],
-      allTilesetIDs[index][negativeModulo(sliderTime + 2, 24)],
+      allTilesetIDs[next][negativeModulo(sliderTime - 2, 24)],
+      allTilesetIDs[next][negativeModulo(sliderTime - 1, 24)],
+      allTilesetIDs[next][negativeModulo(sliderTime, 24)],
+      allTilesetIDs[next][negativeModulo(sliderTime + 1, 24)],
+      allTilesetIDs[next][negativeModulo(sliderTime + 2, 24)],
     ]);
     mapRef.current
       ?.getMap()
@@ -312,6 +307,7 @@ export default function Home() {
           onPlayPauseClicked={onPlayPauseClick}
           onSkipClicked={onSkipClicked}
           sliderDays={sliderDays}
+          sliderDateIndex={sliderDateIndex}
           onDateChange={onDateChange}
         />
       )}
