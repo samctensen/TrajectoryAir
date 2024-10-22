@@ -129,7 +129,6 @@ export default function Home() {
   }
 
   function onDateChange(current: number, next: number) {
-    console.log(next)
     setSliderDateIndex(next);
     setActiveTilesets([
       allTilesetIDs[next][negativeModulo(sliderTime - 2, 24)],
