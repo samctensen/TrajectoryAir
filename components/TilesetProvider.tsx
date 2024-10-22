@@ -4,14 +4,18 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useLocation } from "./LocationProvider";
 
 const TilesetContext = createContext<{
+  cmaqEnabled: boolean;
   allTilesetIDs: string[][];
   activeTilesets: string[];
   setActiveTilesets: (newActiveSet: string[]) => void;
+  setCMAQEnabled: () => void;
   tilesetsLoading: boolean;
 }>({
+  cmaqEnabled: false,
   allTilesetIDs: [],
   activeTilesets: [],
   setActiveTilesets: () => null,
+  setCMAQEnabled: () => null,
   tilesetsLoading: true,
 });
 
@@ -57,6 +61,7 @@ export const TilesetProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const [cmaqEnabled, setCmaqEnabled] = useState(false);
   const [isLoading, setLoading] = useState(true);
   const [allTilesetIDs, setAllTilesetIDs] = useState<string[][]>([]);
   const [activeTilesets, setTileset] = useState<string[]>([]);
@@ -82,11 +87,28 @@ export const TilesetProvider = ({
   return (
     <TilesetContext.Provider
       value={{
+        cmaqEnabled,
         allTilesetIDs,
         activeTilesets,
         tilesetsLoading: isLoading && userLocationLoading,
         setActiveTilesets: (newSet: string[]) => {
           setTileset(newSet);
+        },
+        setCMAQEnabled: () => {
+          if (cmaqEnabled) {
+            setCmaqEnabled(false);
+            const allTATilesetIDs = allTilesetIDs.map((day) => day.map(id => id.slice(0, -5)));
+            setAllTilesetIDs(allTATilesetIDs);
+            const activeTATilesets = activeTilesets.map(id => id.slice(0, -5));
+            setTileset(activeTATilesets);
+          }
+          else {
+            setCmaqEnabled(true);
+            const allCMAQTilesetIDs = allTilesetIDs.map((day) => day.map(id => id + "_CMAQ"));
+            setAllTilesetIDs(allCMAQTilesetIDs);
+            const activeCMAQTilesets = activeTilesets.map(id => id + "_CMAQ");
+            setTileset(activeCMAQTilesets);
+          }
         },
       }}
     >
