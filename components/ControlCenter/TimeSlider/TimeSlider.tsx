@@ -1,3 +1,4 @@
+import { useTilesets } from "@/components/TilesetProvider";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Slider, SliderThumb } from "@mui/material";
@@ -5,6 +6,7 @@ import "./TimeSlider.css";
 
 interface TimeSliderProps {
   sliderValue: number;
+  sliderDateIndex: number;
   onTimeChange(
     event: Event,
     value: number | number[],
@@ -12,7 +14,10 @@ interface TimeSliderProps {
   ): void;
 }
 
-export const TimeSlider = ({ sliderValue, onTimeChange }: TimeSliderProps) => {
+export const TimeSlider = ({ sliderValue, sliderDateIndex, onTimeChange }: TimeSliderProps) => {
+
+  const { allTilesetIDs } = useTilesets();
+
   return (
     <div className="time-container">
       <Slider
@@ -57,7 +62,7 @@ export const TimeSlider = ({ sliderValue, onTimeChange }: TimeSliderProps) => {
         }
         step={1}
         min={0}
-        max={23}
+        max={allTilesetIDs[sliderDateIndex].length - 1}
         marks
         value={sliderValue}
         onChange={onTimeChange}

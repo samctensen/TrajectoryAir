@@ -21,23 +21,28 @@ export function useTilesets() {
 
 function getAllTilesets(timezone: number): string[][] {
   const listOfTilesets: string[][] = [];
-  for (let index = 0; index < 5; index++) {
+  for (let index = 0; index < 4; index++) {
     let currentDay = new Date();
     currentDay.setDate(currentDay.getDate() + index);
-    const currentTilesets = getDaysTilesets(currentDay, timezone);
-    listOfTilesets.push(currentTilesets);
+    const currentTilesets = getDaysTilesets(currentDay, timezone, index);
+    if (currentTilesets) {
+      listOfTilesets.push(currentTilesets);
+    }
   }
   return listOfTilesets;
 }
 
-function getDaysTilesets(date: Date, timezone: number): string[] {
+function getDaysTilesets(date: Date, timezone: number, dayIndex: number): string[] {
   let newDate = new Date(date.getTime());
   let nextDay = new Date(newDate.getTime());
   nextDay.setDate(newDate.getDate() + 1);
   const ids = [];
-  for (let index = 0; index < 24; index++) {
+  for (let index = 0; index <  (dayIndex !== 3 ? 24 : 24 - timezone + 1); index++) {
     if (index + timezone > 23 && newDate.getTime() !== nextDay.getTime()) {
       newDate.setDate(nextDay.getDate());
+    }
+    if (dayIndex > 3) {
+      return ids;
     }
     let dateString = newDate.toISOString().split("T")[0] + "_";
     dateString =
